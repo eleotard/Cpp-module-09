@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 15:23:49 by eleotard          #+#    #+#             */
-/*   Updated: 2023/04/21 15:43:38 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/04/21 17:17:21 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ Date::Date(int day, int month, int year) : _day(day), _month(month), _year(year)
 }
 
 Date::Date(Date const& src) {
-	this = src;
+	*this = src;
 }
 
 Date::~Date() {

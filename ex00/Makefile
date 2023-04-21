@@ -6,7 +6,7 @@
 #    By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/18 18:40:07 by eleotard          #+#    #+#              #
-#    Updated: 2023/04/21 15:35:30 by eleotard         ###   ########.fr        #
+#    Updated: 2023/04/21 17:51:34 by eleotard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,7 @@ FLAGS = -Wall -Wextra -Werror -std=c++98
 
 all: ${NAME}
 
-${NAME}:
+${NAME}: ${OBJS}
 	${CC} ${FLAGS} ${OBJS} -o ${NAME}
 
 clean:

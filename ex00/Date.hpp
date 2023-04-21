@@ -6,12 +6,12 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 15:24:01 by eleotard          #+#    #+#             */
-/*   Updated: 2023/04/21 15:36:47 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/04/21 17:51:51 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef DATE_HPP
-# define DAT_HPP
+# define DATE_HPP
 
 #include <iostream>
 #include "BitcoinExchange.hpp"
