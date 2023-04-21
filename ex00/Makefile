@@ -6,7 +6,7 @@
 #    By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/18 18:40:07 by eleotard          #+#    #+#              #
-#    Updated: 2023/04/18 19:01:22 by eleotard         ###   ########.fr        #
+#    Updated: 2023/04/21 15:35:30 by eleotard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,6 +14,7 @@ NAME = btc
 
 SRCS =	main.cpp \
 		BitcoinExchange.cpp \
+		Date.cpp \
 
 OBJS = ${SRCS:%.cpp=%.o}
 
