@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 18:56:12 by eleotard          #+#    #+#             */
-/*   Updated: 2023/04/21 18:37:33 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/04/26 19:13:09 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <string>
 #include "BitcoinExchange.hpp"
 
-BitcoinExchange::BitcoinExchange() : _inputs(0) {
+BitcoinExchange::BitcoinExchange() {
 	std::cout << "BitcoinExchange constructed" << std::endl;
 }
 
@@ -35,44 +35,86 @@ BitcoinExchange::~BitcoinExchange() {
 
 BitcoinExchange &BitcoinExchange::operator=(BitcoinExchange const& src) {
 	_m = src._m;
-	_inputs = src._inputs;
 	return (*this);
 }
 
-void	BitcoinExchange::recoverInput(std::string const& filename) {
-	
-	std::string	line;
-	std::ifstream file (filename.c_str());
+void BitcoinExchange::setDatabase(std::string const& filename) {
+    std::string		line;
+	std::ifstream	file (filename.c_str());
+	std::string		delimiter = ",";
+	size_t i = 0;
+	char *pEnd;
 	
 	if (!file.is_open()) {
 		file.close();
 		throw (BitcoinExchange::WrongFile());
 	}
 	else {
+        line = "";
 		while (getline(file, line)) {
-			_inputs.push_back(line);
-			std::cout << line << std::endl;
+			if (line == "date,exchange_rate")
+				continue ;
+			i = line.find(delimiter);
+			std::string token1 = line.substr(0, i);
+			std::string token2 = line.substr(i + 1, *line.end() - i);
+			_m[token1] = std::strtod(token2.c_str(), &pEnd);
 		}
 	}
-	std::cout << std::endl;
-	std::cout << std::endl;
-	printInputs();
 	file.close();
 }
 
-
 void	BitcoinExchange::checkSyntax() {
-	std::vector<std::string>::iterator it = _inputs.begin();
+	// std::vector<std::string>::iterator it = _m.begin();
 
-	for (; it != _inputs.end(); ++it) {
-		//check toute la syntaxe
-	}
+	// for (; it != _m.end(); ++it) {
+	// 	//check toute la syntaxe
+	// }
 }
 
 void	BitcoinExchange::printInputs() {
 	
-	std::vector<std::string>::iterator it = _inputs.begin();
-	for (; it != _inputs.end(); ++it) {
-		std::cout << *it << std::endl;
+	std::map<std::string, double>::iterator it = _m.begin();
+	std::cout << _m.begin()->first << std::endl;
+	for (; it != _m.end(); ++it) {
+		std::cout << BLUE << it->first << " => " << it->second << DEFAULT << '\n';
 	}
 }
+
+
+
+// void	BitcoinExchange::recoverInput(std::string const& filename) {
+	
+// 	std::string		line;
+// 	std::ifstream	file (filename.c_str());
+// 	std::string		delimiter = "|";
+// 	size_t i = 0;
+// 	char *pEnd;
+	
+// 	if (!file.is_open()) {
+// 		file.close();
+// 		throw (BitcoinExchange::WrongFile());
+// 	}
+// 	else {
+// 		while (getline(file, line)) {
+// 			if (line == "date | value")
+// 				continue ;
+// 			if (line.find(delimiter) == line.npos)
+// 				throw (BitcoinExchange::WrongSyntax());
+// 			std::cout << line << std::endl;
+// 			i = line.find(delimiter);
+// 			std::string token1 = line.substr(0, i);
+// 			std::cout << "[" << token1 << "]" << std::endl;
+// 			std::string token2 = line.substr(i + 1, *line.end() - i);
+// 			std::cout << "[" << token2 << "]" << std::endl;
+// 			_m[token1] = std::strtod(token2.c_str(), &pEnd);
+// 			std::cout << _m[token1] << std::endl;
+// 			std::cout << _m.begin()->first << std::endl;
+// 			std::cout << std::endl;
+// 			std::cout << std::endl;
+// 		}
+// 	}
+// 	std::cout << std::endl;
+// 	std::cout << std::endl;
+// 	printInputs();
+// 	file.close();
+// }
