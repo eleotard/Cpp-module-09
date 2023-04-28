@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 18:57:18 by eleotard          #+#    #+#             */
-/*   Updated: 2023/04/26 19:08:37 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/04/28 19:49:07 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,19 +33,31 @@ class BitcoinExchange {
         class WrongFile : public std::exception {
             public:
                 virtual const char *what() const throw() {
-                    return ("File problem");
+                    return ("Error: File problem");
                 }
         };
-        class WrongSyntax : public std::exception {
+        class LargerBcNumber: public std::exception {
             public:
                 virtual const char *what() const throw() {
-                    return ("Wrong syntax in input file");
+                    return ("Error: too large number");
                 }
         };
-        class WrongBcValue: public std::exception {
+        class LowerBcNumber: public std::exception {
             public:
                 virtual const char *what() const throw() {
-                    return ("Wrong bitcoin value");
+                    return ("Error: not a positive number");
+                }
+        };
+        class DateError: public std::exception {
+            public:
+                virtual const char *what() const throw() {
+                    return ("Error: bad input");
+                }
+        };
+        class WrongGlobalSyntax: public std::exception {
+            public:
+                virtual const char *what() const throw() {
+                    return ("Error: wrong global syntax");
                 }
         };
         BitcoinExchange();
@@ -58,9 +70,17 @@ class BitcoinExchange {
         void    printInputs();
         
 		void	setDatabase(std::string const& filename);
-		std::map<std::string, double> &getDatabase() const;
+		std::map<std::string, double> const&getDatabase() const;
+        bool    getDbState() const;
+        
+        void	treatInputFile(std::string const& filename);
+        
+        void    checkGlobalSyntax(std::string &input);
+        void    checkDateSyntax(std::string & date);
+        
     private:
         std::map<std::string, double> _m;
+        bool _dbState;
 };
 
 #endif

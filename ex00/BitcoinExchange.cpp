@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 18:56:12 by eleotard          #+#    #+#             */
-/*   Updated: 2023/04/26 19:13:09 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/04/28 19:51:27 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,9 @@
 #include <vector>
 #include <string>
 #include "BitcoinExchange.hpp"
+#include <unistd.h>
 
-BitcoinExchange::BitcoinExchange() {
+BitcoinExchange::BitcoinExchange() : _dbState(0) {
 	std::cout << "BitcoinExchange constructed" << std::endl;
 }
 
@@ -35,6 +36,7 @@ BitcoinExchange::~BitcoinExchange() {
 
 BitcoinExchange &BitcoinExchange::operator=(BitcoinExchange const& src) {
 	_m = src._m;
+	_dbState = src._dbState;
 	return (*this);
 }
 
@@ -61,14 +63,15 @@ void BitcoinExchange::setDatabase(std::string const& filename) {
 		}
 	}
 	file.close();
+	_dbState = true;
 }
 
-void	BitcoinExchange::checkSyntax() {
-	// std::vector<std::string>::iterator it = _m.begin();
+std::map<std::string, double> const&BitcoinExchange::getDatabase() const {
+	return (_m);
+}
 
-	// for (; it != _m.end(); ++it) {
-	// 	//check toute la syntaxe
-	// }
+bool	BitcoinExchange::getDbState() const {
+	return (_dbState);
 }
 
 void	BitcoinExchange::printInputs() {
@@ -77,6 +80,51 @@ void	BitcoinExchange::printInputs() {
 	std::cout << _m.begin()->first << std::endl;
 	for (; it != _m.end(); ++it) {
 		std::cout << BLUE << it->first << " => " << it->second << DEFAULT << '\n';
+	}
+}
+
+void	BitcoinExchange::checkGlobalSyntax(std::string & line) {
+	size_t		i = 0;
+	int			args = 0;
+	std::string delimiter = " ";
+	std::string save(line);
+	
+	while (i != std::string::npos)
+	{
+		//std::cout << YELLOW << "[" << line << "]" << DEFAULT << std::endl;
+		i = line.find(delimiter);
+		//std::cout << i << std::endl;
+		if (i != std::string::npos) {
+			i++;
+			line = line.c_str() + i;
+		}
+		args++;
+	}
+	//std::cout << GREEN << args << DEFAULT << std::endl;
+	if (args != 3)
+		throw (BitcoinExchange::WrongGlobalSyntax());
+	else 
+		std::cout << save << std::endl;
+}
+
+
+void	BitcoinExchange::treatInputFile(std::string const& filename) {
+	std::ifstream	file (filename.c_str());
+	std::string		line;
+	
+	while(getline(file, line)) {
+		if (line == "date | value")
+			continue ;
+		try {
+			checkGlobalSyntax(line);
+			//si la syntaxe globale est respectee
+			//si la syntaxe de la date est respectee
+			//si la date est rationnelle
+			//sil ny a pas d'overflow
+		}
+		catch (std::exception const& e) {
+			std::cout << e.what() << std::endl;
+		}
 	}
 }
 

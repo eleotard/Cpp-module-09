@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 18:57:00 by eleotard          #+#    #+#             */
-/*   Updated: 2023/04/26 19:22:12 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/04/28 19:49:49 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@
 
 
 
+
+
 int main(int argc, char **argv)
 {
 	(void)argc;
@@ -40,15 +42,18 @@ int main(int argc, char **argv)
 		return (std::cerr << "Error: could not open file." << std::endl, 1);
 	if (!argv[1][0])
 		return (std::cerr << "Error: empty argument." << std::endl, 2);
-
+	
+	BitcoinExchange b;
 	try {
-		BitcoinExchange b;
 		b.setDatabase("data.csv");
 		b.printInputs();
-		
 	}
 	catch (std::exception const& e) {
 		std::cout << e.what() << std::endl;
+	}
+	
+	if (b.getDbState()) {
+		b.treatInputFile(argv[1]);
 	}
 
 	//while avec un try catch a linterieur
