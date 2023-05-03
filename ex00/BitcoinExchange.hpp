@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 18:57:18 by eleotard          #+#    #+#             */
-/*   Updated: 2023/04/28 19:49:07 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/05/03 20:53:57 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,19 @@ class BitcoinExchange {
         class DateError: public std::exception {
             public:
                 virtual const char *what() const throw() {
-                    return ("Error: bad input");
+                    return ("Error: Date bad input");
                 }
         };
         class WrongGlobalSyntax: public std::exception {
             public:
                 virtual const char *what() const throw() {
-                    return ("Error: wrong global syntax");
+                    return ("Error: wrong input global syntax");
+                }
+        };
+        class WrongDataSyntax: public std::exception {
+            public:
+                virtual const char *what() const throw() {
+                    return ("Error: wrong data syntax");
                 }
         };
         BitcoinExchange();
@@ -75,11 +81,11 @@ class BitcoinExchange {
         
         void	treatInputFile(std::string const& filename);
         
-        void    checkGlobalSyntax(std::string &input);
-        void    checkDateSyntax(std::string & date);
-        
+        void    checkNbOfArgs(std::string input);
+        void    checkSeparator(std::string line);
+        void    checkDateSyntax(std::string date);
     private:
-        std::map<std::string, double> _m;
+        std::map<std::string, double> _m_data;
         bool _dbState;
 };
 
