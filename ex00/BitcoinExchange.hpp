@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 18:57:18 by eleotard          #+#    #+#             */
-/*   Updated: 2023/05/03 20:53:57 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/08/30 16:35:38 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,18 @@ class BitcoinExchange {
                     return ("Error: wrong data syntax");
                 }
         };
+        class NegativeNb: public std::exception {
+            public:
+                virtual const char *what() const throw() {
+                    return ("Error: not a positive number");
+                }
+        };
+        class LargeNb: public std::exception {
+            public:
+                virtual const char *what() const throw() {
+                    return ("Error: too large number");
+                }
+        };
         BitcoinExchange();
         BitcoinExchange(std::string filename);
         BitcoinExchange(BitcoinExchange const& src);
@@ -80,6 +92,8 @@ class BitcoinExchange {
         bool    getDbState() const;
         
         void	treatInputFile(std::string const& filename);
+        void	globalCheck(std::string line, std::string const& delimiter);
+        void	dateCheck(std::string date);
         
         void    checkNbOfArgs(std::string input);
         void    checkSeparator(std::string line);

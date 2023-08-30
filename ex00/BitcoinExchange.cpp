@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 18:56:12 by eleotard          #+#    #+#             */
-/*   Updated: 2023/05/03 21:57:52 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/08/30 16:36:59 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <string>
 #include "BitcoinExchange.hpp"
 #include <unistd.h>
+#include <limits.h>
 
 BitcoinExchange::BitcoinExchange() : _dbState(0) {
 	std::cout << "BitcoinExchange constructed" << std::endl;
@@ -162,6 +163,66 @@ void	BitcoinExchange::checkDateSyntax(std::string date) {
 		throw (BitcoinExchange::DateError());
 }
 
+bool isInt(std::string const& part, int start, int end) {
+	size_t pos = 0;
+	try {
+		std::stoi(part.substr(start, end), &pos);
+	}
+	catch (const std::exception&) {
+    }
+	if (pos != part.substr(start, end).length())
+		return false;
+	return true;
+}
+
+bool isDouble(std::string const& part) {
+	size_t	pos = 0;
+	double	nb = 0;
+	try {
+		nb = std::stod(part, &pos);
+	}
+	catch (const std::exception&) {
+    }
+	if (pos != part.length())
+		return false;
+	if (nb > INT_MAX)
+		throw (BitcoinExchange::LargeNb());
+	else if (nb < 0)
+		throw (BitcoinExchange::NegativeNb());
+	return true;
+}
+
+void	BitcoinExchange::globalCheck(std::string line, std::string const& delimiter) {
+	size_t		delimiterPos = line.find(delimiter);
+	
+	if (delimiterPos != 11)
+		throw (BitcoinExchange::WrongGlobalSyntax());
+
+	std::string	fstPart(line, 0, delimiterPos + 2);
+	if (fstPart[4] != '-' || fstPart[7] != '-')
+		throw (BitcoinExchange::WrongGlobalSyntax());
+	if (fstPart[10] != ' ' || fstPart[12] != ' ')
+		throw (BitcoinExchange::WrongGlobalSyntax());
+	if (!isInt(fstPart, 0, 4) || !isInt(fstPart, 5, 2)
+		|| !isInt(fstPart, 8, 2))
+		throw (BitcoinExchange::WrongGlobalSyntax());
+
+	std::string	lstPart(line, delimiterPos + 2, line.length() - delimiterPos + 2);
+	if (!isDouble(lstPart))
+		throw (BitcoinExchange::WrongGlobalSyntax());
+	
+	//std::cout << "[" << lstPart << "]" << std::endl;
+}
+
+void	BitcoinExchange::dateCheck(std::string date) {
+	std::string year(date, 0, 4);
+	std::string month(date, 5, 2);
+	std::string day(date, 8, 2);
+	// std::cout << "[" << year << "]" << std::endl;
+	// std::cout << "[" << month << "]" << std::endl;
+	// std::cout << "[" << day << "]" << std::endl;
+}	
+
 void	BitcoinExchange::treatInputFile(std::string const& filename) {
 	std::ifstream	file (filename.c_str());
 	std::string		line; 
@@ -172,9 +233,13 @@ void	BitcoinExchange::treatInputFile(std::string const& filename) {
 	
 	while(getline(file, line)) {
 		try {
-			checkNbOfArgs(line); //check si ya 3 trucs
-			checkSeparator(line);//si la syntaxe globale est respectee
-			checkDateSyntax(line.substr(0, line.find(" ")));
+			// checkNbOfArgs(line); //check si ya 3 trucs
+			// checkSeparator(line);//si la syntaxe globale est respectee
+			// checkDateSyntax(line.substr(0, line.find(" ")));
+			globalCheck(line, "|");
+			std::string date(line, 0, 10);
+			std::cout << "[" << date << "]" << std::endl;
+			dateCheck(date);
 			std::cout << line << std::endl;
 		}
 		catch (std::exception const& e) {
@@ -183,6 +248,7 @@ void	BitcoinExchange::treatInputFile(std::string const& filename) {
 		//si la syntaxe de la date est respectee
 		//si la date est rationnelle
 		//sil ny a pas d'overflow
+		//chercher le truc attribue et le ressortir
 	}
 }
 
