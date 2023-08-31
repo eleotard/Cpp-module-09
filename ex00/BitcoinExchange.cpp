@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 18:56:12 by eleotard          #+#    #+#             */
-/*   Updated: 2023/08/31 19:25:34 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/08/31 19:29:36 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,8 +127,6 @@ void	BitcoinExchange::globalCheck(std::string line, std::string const& delimiter
 	std::string	lstPart(line, delimiterPos + 2, line.length() - delimiterPos + 2);
 	if (!isDouble(lstPart))
 		throw (BitcoinExchange::WrongGlobalSyntax());
-	
-	//std::cout << "[" << lstPart << "]" << std::endl;
 }
 
 void	BitcoinExchange::dateCheck(std::string date) {
