@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 18:56:12 by eleotard          #+#    #+#             */
-/*   Updated: 2023/08/31 15:23:03 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/08/31 15:50:49 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,85 +92,6 @@ void	BitcoinExchange::printInputs() {
 	}
 }
 
-// void	BitcoinExchange::checkNbOfArgs(std::string line) {
-// 	size_t		i = 0;
-// 	int			args = 0;
-// 	std::string delimiter = " ";
-// 	std::string save(line);
-	
-// 	while (i != std::string::npos)
-// 	{
-// 		//std::cout << YELLOW << "[" << line << "]" << DEFAULT << std::endl;
-// 		i = line.find(delimiter);
-// 		//std::cout << i << std::endl;
-// 		if (i != std::string::npos) {
-// 			i++;
-// 			line = line.c_str() + i;
-// 		}
-// 		args++;
-// 	}
-// 	//std::cout << GREEN << args << DEFAULT << std::endl;
-// 	if (args != 3)
-// 		throw (BitcoinExchange::WrongGlobalSyntax());
-// }
-
-// void	BitcoinExchange::checkSeparator(std::string line) {
-// 	size_t		i = 0;
-// 	int			j = 0;
-// 	std::string	delimiter = " ";
-// 	std::string	save;
-
-// 	while (i != std::string::npos && j < 2) {
-// 		i = line.find(delimiter);
-// 		if (i != std::string::npos) {
-// 			save = line.substr(0, i);
-// 			i++;
-// 			line = line.c_str() + i;
-// 		}
-// 		j++;
-// 	}
-// 	if (save != "|")
-// 		throw (BitcoinExchange::WrongGlobalSyntax());
-// }
-
-// void	BitcoinExchange::checkDateSyntax(std::string date) {
-// 	std::string	delimiter = "-";
-// 	std::string input[3];
-// 	size_t		i = 0;
-// 	//size_t		save = 0;
-// 	int			args = 0;
-	
-// 	//std::cout << GREEN << "[" << date << "]" <<  DEFAULT << std::endl;
-// 	while (i != std::string::npos)
-// 	{
-// 		// save = i;
-// 		i = date.find("-");
-// 		//std::cout << "date = " << date << std::endl ;
-// 		//std::cout << "i = " << i << std::endl ;
-// 		//std::cout << "save = " << save << std::endl ;
-// 		//std::cout << i - save << std::endl ;
-// 		if (i != std::string::npos && date.c_str()[i + 1] && date.c_str()[i + 1] == '-')
-// 			throw (BitcoinExchange::DateError());
-// 		if (i != std::string::npos && i != 0) {
-// 			if (args > 2)
-// 				throw (BitcoinExchange::DateError());
-// 			input[args] = date.substr(0, i);
-// 			i++;
-// 			date = date.c_str() + i;
-// 		}
-// 		else {
-// 			if (args > 2)
-// 				throw (BitcoinExchange::DateError());
-// 			input[args] = date;
-// 		}
-// 		std::cout << YELLOW << "[" << input[args] << "]" <<  DEFAULT << std::endl;
-// 		args++;
-// 		//std::cout << "args = " << args << std::endl ;
-// 	}
-// 	if (args != 3)
-// 		throw (BitcoinExchange::DateError());
-// }
-
 bool isInt(std::string const& part, int start, int end) {
 	size_t		 i = 0;
 	std::string	str = part.substr(start, end);
@@ -223,9 +144,36 @@ void	BitcoinExchange::dateCheck(std::string date) {
 	std::string year(date, 0, 4);
 	std::string month(date, 5, 2);
 	std::string day(date, 8, 2);
-	// std::cout << "[" << year << "]" << std::endl;
+	std::stringstream ss(year);
+	std::stringstream ss1(month);
+	std::stringstream ss2(day);
+	int y = 0;
+	int m = 0;
+	int d = 0;
+
+	ss >> y;
+	ss1 >> m;
+	ss2 >> d;
+	if (y > 2022 || y < 2009)
+		throw DateError();
+	if (m > 12)
+		throw DateError();
+	if (d > 31)
+		throw DateError();
+	if ((m == 2 || m == 4 || m == 6 || m == 9 || m == 11)
+		&& d == 31)
+		throw DateError();
+	if ((y == 2012 || y == 2016 || y == 2020) && m == 2) {
+		if (d > 29)
+			throw DateError();
+	}
+	else if ((y != 2012 && y != 2016 && y != 2020) && m == 2) {
+		if (d > 28)
+			throw DateError();
+	}
+	// std::cout << YELLOW << "[" << year << "]" << std::endl;
 	// std::cout << "[" << month << "]" << std::endl;
-	// std::cout << "[" << day << "]" << std::endl;
+	// std::cout << "[" << day << "]" << DEFAULT << std::endl;
 }	
 
 void	BitcoinExchange::treatInputFile(std::string const& filename) {
@@ -242,9 +190,9 @@ void	BitcoinExchange::treatInputFile(std::string const& filename) {
 			// checkSeparator(line);//si la syntaxe globale est respectee
 			// checkDateSyntax(line.substr(0, line.find(" ")));
 			globalCheck(line, "|");
-			// std::string date(line, 0, 10);
-			// std::cout << "[" << date << "]" << std::endl;
-			// dateCheck(date);
+			std::string date(line, 0, 10);
+			std::cout << "[" << date << "]" << std::endl;
+			dateCheck(date);
 			std::cout << line << std::endl;
 		}
 		catch (std::exception const& e) {
@@ -256,42 +204,3 @@ void	BitcoinExchange::treatInputFile(std::string const& filename) {
 		//chercher le truc attribue et le ressortir
 	}
 }
-
-
-
-// void	BitcoinExchange::recoverInput(std::string const& filename) {
-	
-// 	std::string		line;
-// 	std::ifstream	file (filename.c_str());
-// 	std::string		delimiter = "|";
-// 	size_t i = 0;
-// 	char *pEnd;
-	
-// 	if (!file.is_open()) {
-// 		file.close();
-// 		throw (BitcoinExchange::WrongFile());
-// 	}
-// 	else {
-// 		while (getline(file, line)) {
-// 			if (line == "date | value")
-// 				continue ;
-// 			if (line.find(delimiter) == line.npos)
-// 				throw (BitcoinExchange::WrongSyntax());
-// 			std::cout << line << std::endl;
-// 			i = line.find(delimiter);
-// 			std::string token1 = line.substr(0, i);
-// 			std::cout << "[" << token1 << "]" << std::endl;
-// 			std::string token2 = line.substr(i + 1, *line.end() - i);
-// 			std::cout << "[" << token2 << "]" << std::endl;
-// 			_m_data[token1] = std::strtod(token2.c_str(), &pEnd);
-// 			std::cout << _m_data[token1] << std::endl;
-// 			std::cout << _m_data.begin()->first << std::endl;
-// 			std::cout << std::endl;
-// 			std::cout << std::endl;
-// 		}
-// 	}
-// 	std::cout << std::endl;
-// 	std::cout << std::endl;
-// 	printInputs();
-// 	file.close();
-// }
