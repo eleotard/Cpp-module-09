@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 18:56:12 by eleotard          #+#    #+#             */
-/*   Updated: 2023/08/31 15:50:49 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/08/31 19:25:34 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <map>
 #include "BitcoinExchange.hpp"
 #include <unistd.h>
 #include <limits.h>
@@ -21,20 +22,13 @@
 #include <iomanip>
 
 BitcoinExchange::BitcoinExchange() : _dbState(0) {
-	std::cout << "BitcoinExchange constructed" << std::endl;
 }
-
-// BitcoinExchange::BitcoinExchange(std::string filename) {
-// 	std::cout << "BitcoinExchange file constructed" << std::endl;
-// }
 
 BitcoinExchange::BitcoinExchange(BitcoinExchange const& src) {
 	*this = src;
-	//std::cout << "BitcoinExchange copy constructed" << std::endl;
 }
 
 BitcoinExchange::~BitcoinExchange() {
-	std::cout << "BitcoinExchange destructed" << std::endl;
 }
 
 BitcoinExchange &BitcoinExchange::operator=(BitcoinExchange const& src) {
@@ -62,15 +56,12 @@ void BitcoinExchange::setDatabase(std::string const& filename) {
 			i = line.find(delimiter);
 			std::string token1 = line.substr(0, i);
 			std::string token2 = line.substr(i + 1, *line.end() - i);
-			//std::cout << BLUE << token2 << DEFAULT << '\n';
 			std::stringstream ss(token2);
 			ss >> nb;
-			//std::cout << std::setprecision(2) << std::fixed << YELLOW << nb << DEFAULT << '\n';
 			_m_data[token1] = nb;
 		}
 	}
 	file.close();
-	//printInputs();
 	_dbState = true;
 }
 
@@ -111,7 +102,7 @@ bool isDouble(std::string const& part) {
 	ss >> nb;
 	if (ss.fail() || !ss.eof())
 		return false;
-	if (nb > INT_MAX)
+	if (nb > 1000)
 		throw (BitcoinExchange::LargeNb());
 	else if (nb < 0)
 		throw (BitcoinExchange::NegativeNb());
@@ -147,6 +138,7 @@ void	BitcoinExchange::dateCheck(std::string date) {
 	std::stringstream ss(year);
 	std::stringstream ss1(month);
 	std::stringstream ss2(day);
+
 	int y = 0;
 	int m = 0;
 	int d = 0;
@@ -171,14 +163,42 @@ void	BitcoinExchange::dateCheck(std::string date) {
 		if (d > 28)
 			throw DateError();
 	}
-	// std::cout << YELLOW << "[" << year << "]" << std::endl;
-	// std::cout << "[" << month << "]" << std::endl;
-	// std::cout << "[" << day << "]" << DEFAULT << std::endl;
-}	
+	if (y == 2009 && m == 1 && d == 1)
+		throw DateError();
+}
+
+double	BitcoinExchange::findResult(std::string const& line) {
+	std::string	date(line, 0, 10);
+	std::string	amount(line, 13, line.length() - 13);
+	std::stringstream	ss(amount);
+	double				amountNb = 0;
+	double				res = 0;
+	std::map<std::string, double>::iterator it;
+	std::map<std::string, double>::iterator ite;
+	
+	ss >> amountNb;
+	it = _m_data.begin();
+	ite = _m_data.end();
+	--ite;
+	if (date == it->first)
+		return (it->second * amountNb);
+	else if (date >= ite->first) {
+		return (ite->second * amountNb);
+	}
+	else {
+		while (date >= it->first && it != _m_data.end()) {
+			it++;
+		}
+		--it;
+		res = it->second * amountNb;
+	}
+	return (res);
+}
 
 void	BitcoinExchange::treatInputFile(std::string const& filename) {
 	std::ifstream	file (filename.c_str());
-	std::string		line; 
+	std::string		line;
+	double			result = 0;
 
 	getline(file, line);
 	if (line != "date | value")
@@ -186,21 +206,20 @@ void	BitcoinExchange::treatInputFile(std::string const& filename) {
 	
 	while(getline(file, line)) {
 		try {
-			// checkNbOfArgs(line); //check si ya 3 trucs
-			// checkSeparator(line);//si la syntaxe globale est respectee
-			// checkDateSyntax(line.substr(0, line.find(" ")));
 			globalCheck(line, "|");
 			std::string date(line, 0, 10);
-			std::cout << "[" << date << "]" << std::endl;
 			dateCheck(date);
-			std::cout << line << std::endl;
+			result = findResult(line);
+			std::string	amount(line, 13, line.length() - 13);
+			std::cout << date << " => " << std::setprecision(2)
+				<< std::fixed << amount << " = "<< result <<  std::endl;
 		}
 		catch (std::exception const& e) {
-			std::cout << e.what() << std::endl;
+			std::cerr << RED << e.what();
+			if ((std::string)e.what() == "Error: bad input"
+				|| (std::string)e.what() == "Error: date bad input")
+				std::cerr << " => " << line;
+			std::cerr << DEFAULT << std::endl;
 		}
-		//si la syntaxe de la date est respectee
-		//si la date est rationnelle
-		//sil ny a pas d'overflow
-		//chercher le truc attribue et le ressortir
 	}
 }

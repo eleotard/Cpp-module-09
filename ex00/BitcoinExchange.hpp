@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 18:57:18 by eleotard          #+#    #+#             */
-/*   Updated: 2023/08/31 15:51:43 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/08/31 19:19:40 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,9 @@
 # define YELLOW	"\033[33m"
 # define BLUE	"\033[34m"
 # define GREEN	"\033[32m"
+# define RED	"\033[31m"
 # define PURPLE	"\033[35m"
-# define DEFAULT	"\033[0m"
+# define DEFAULT    "\033[0m"
 
 class Date;
 
@@ -51,13 +52,13 @@ class BitcoinExchange {
         class DateError: public std::exception {
             public:
                 virtual const char *what() const throw() {
-                    return ("Error: Date bad input");
+                    return ("Error: date bad input");
                 }
         };
         class WrongGlobalSyntax: public std::exception {
             public:
                 virtual const char *what() const throw() {
-                    return ("Error: wrong input global syntax");
+                    return ("Error: bad input");
                 }
         };
         class WrongDataSyntax: public std::exception {
@@ -90,6 +91,7 @@ class BitcoinExchange {
 		std::map<std::string, double> const&getDatabase() const;
         bool    getDbState() const;
         
+        double  findResult(std::string const& line);
         void	globalCheck(std::string line, std::string const& delimiter);
         void	dateCheck(std::string date);
         void	treatInputFile(std::string const& filename);
