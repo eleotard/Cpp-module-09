@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 18:56:12 by eleotard          #+#    #+#             */
-/*   Updated: 2023/08/30 16:36:59 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/08/31 15:23:03 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 #include "BitcoinExchange.hpp"
 #include <unistd.h>
 #include <limits.h>
+#include <sstream>
+#include <iomanip>
 
 BitcoinExchange::BitcoinExchange() : _dbState(0) {
 	std::cout << "BitcoinExchange constructed" << std::endl;
@@ -45,8 +47,8 @@ void BitcoinExchange::setDatabase(std::string const& filename) {
     std::string		line;
 	std::ifstream	file (filename.c_str());
 	std::string		delimiter = ",";
-	size_t i = 0;
-	char *pEnd;
+	size_t			i = 0;
+	float			nb = 0;
 	
 	if (!file.is_open()) {
 		file.close();
@@ -60,10 +62,15 @@ void BitcoinExchange::setDatabase(std::string const& filename) {
 			i = line.find(delimiter);
 			std::string token1 = line.substr(0, i);
 			std::string token2 = line.substr(i + 1, *line.end() - i);
-			_m_data[token1] = std::strtod(token2.c_str(), &pEnd);
+			//std::cout << BLUE << token2 << DEFAULT << '\n';
+			std::stringstream ss(token2);
+			ss >> nb;
+			//std::cout << std::setprecision(2) << std::fixed << YELLOW << nb << DEFAULT << '\n';
+			_m_data[token1] = nb;
 		}
 	}
 	file.close();
+	//printInputs();
 	_dbState = true;
 }
 
@@ -80,110 +87,108 @@ void	BitcoinExchange::printInputs() {
 	std::map<std::string, double>::iterator it = _m_data.begin();
 	std::cout << _m_data.begin()->first << std::endl;
 	for (; it != _m_data.end(); ++it) {
-		std::cout << BLUE << it->first << " => " << it->second << DEFAULT << '\n';
+		std::cout << BLUE << it->first << " => "
+			<< std::setprecision(2) << std::fixed << it->second << DEFAULT << '\n';
 	}
 }
 
-void	BitcoinExchange::checkNbOfArgs(std::string line) {
-	size_t		i = 0;
-	int			args = 0;
-	std::string delimiter = " ";
-	std::string save(line);
+// void	BitcoinExchange::checkNbOfArgs(std::string line) {
+// 	size_t		i = 0;
+// 	int			args = 0;
+// 	std::string delimiter = " ";
+// 	std::string save(line);
 	
-	while (i != std::string::npos)
-	{
-		//std::cout << YELLOW << "[" << line << "]" << DEFAULT << std::endl;
-		i = line.find(delimiter);
-		//std::cout << i << std::endl;
-		if (i != std::string::npos) {
-			i++;
-			line = line.c_str() + i;
-		}
-		args++;
-	}
-	//std::cout << GREEN << args << DEFAULT << std::endl;
-	if (args != 3)
-		throw (BitcoinExchange::WrongGlobalSyntax());
-}
+// 	while (i != std::string::npos)
+// 	{
+// 		//std::cout << YELLOW << "[" << line << "]" << DEFAULT << std::endl;
+// 		i = line.find(delimiter);
+// 		//std::cout << i << std::endl;
+// 		if (i != std::string::npos) {
+// 			i++;
+// 			line = line.c_str() + i;
+// 		}
+// 		args++;
+// 	}
+// 	//std::cout << GREEN << args << DEFAULT << std::endl;
+// 	if (args != 3)
+// 		throw (BitcoinExchange::WrongGlobalSyntax());
+// }
 
-void	BitcoinExchange::checkSeparator(std::string line) {
-	size_t		i = 0;
-	int			j = 0;
-	std::string	delimiter = " ";
-	std::string	save;
+// void	BitcoinExchange::checkSeparator(std::string line) {
+// 	size_t		i = 0;
+// 	int			j = 0;
+// 	std::string	delimiter = " ";
+// 	std::string	save;
 
-	while (i != std::string::npos && j < 2) {
-		i = line.find(delimiter);
-		if (i != std::string::npos) {
-			save = line.substr(0, i);
-			i++;
-			line = line.c_str() + i;
-		}
-		j++;
-	}
-	if (save != "|")
-		throw (BitcoinExchange::WrongGlobalSyntax());
-}
+// 	while (i != std::string::npos && j < 2) {
+// 		i = line.find(delimiter);
+// 		if (i != std::string::npos) {
+// 			save = line.substr(0, i);
+// 			i++;
+// 			line = line.c_str() + i;
+// 		}
+// 		j++;
+// 	}
+// 	if (save != "|")
+// 		throw (BitcoinExchange::WrongGlobalSyntax());
+// }
 
-void	BitcoinExchange::checkDateSyntax(std::string date) {
-	std::string	delimiter = "-";
-	std::string input[3];
-	size_t		i = 0;
-	//size_t		save = 0;
-	int			args = 0;
+// void	BitcoinExchange::checkDateSyntax(std::string date) {
+// 	std::string	delimiter = "-";
+// 	std::string input[3];
+// 	size_t		i = 0;
+// 	//size_t		save = 0;
+// 	int			args = 0;
 	
-	//std::cout << GREEN << "[" << date << "]" <<  DEFAULT << std::endl;
-	while (i != std::string::npos)
-	{
-		// save = i;
-		i = date.find("-");
-		//std::cout << "date = " << date << std::endl ;
-		//std::cout << "i = " << i << std::endl ;
-		//std::cout << "save = " << save << std::endl ;
-		//std::cout << i - save << std::endl ;
-		if (i != std::string::npos && date.c_str()[i + 1] && date.c_str()[i + 1] == '-')
-			throw (BitcoinExchange::DateError());
-		if (i != std::string::npos && i != 0) {
-			if (args > 2)
-				throw (BitcoinExchange::DateError());
-			input[args] = date.substr(0, i);
-			i++;
-			date = date.c_str() + i;
-		}
-		else {
-			if (args > 2)
-				throw (BitcoinExchange::DateError());
-			input[args] = date;
-		}
-		std::cout << YELLOW << "[" << input[args] << "]" <<  DEFAULT << std::endl;
-		args++;
-		//std::cout << "args = " << args << std::endl ;
-	}
-	if (args != 3)
-		throw (BitcoinExchange::DateError());
-}
+// 	//std::cout << GREEN << "[" << date << "]" <<  DEFAULT << std::endl;
+// 	while (i != std::string::npos)
+// 	{
+// 		// save = i;
+// 		i = date.find("-");
+// 		//std::cout << "date = " << date << std::endl ;
+// 		//std::cout << "i = " << i << std::endl ;
+// 		//std::cout << "save = " << save << std::endl ;
+// 		//std::cout << i - save << std::endl ;
+// 		if (i != std::string::npos && date.c_str()[i + 1] && date.c_str()[i + 1] == '-')
+// 			throw (BitcoinExchange::DateError());
+// 		if (i != std::string::npos && i != 0) {
+// 			if (args > 2)
+// 				throw (BitcoinExchange::DateError());
+// 			input[args] = date.substr(0, i);
+// 			i++;
+// 			date = date.c_str() + i;
+// 		}
+// 		else {
+// 			if (args > 2)
+// 				throw (BitcoinExchange::DateError());
+// 			input[args] = date;
+// 		}
+// 		std::cout << YELLOW << "[" << input[args] << "]" <<  DEFAULT << std::endl;
+// 		args++;
+// 		//std::cout << "args = " << args << std::endl ;
+// 	}
+// 	if (args != 3)
+// 		throw (BitcoinExchange::DateError());
+// }
 
 bool isInt(std::string const& part, int start, int end) {
-	size_t pos = 0;
-	try {
-		std::stoi(part.substr(start, end), &pos);
+	size_t		 i = 0;
+	std::string	str = part.substr(start, end);
+	
+	while (i < str.length()) {
+		if (!std::isdigit(str[i]))
+			return false;
+		i++;
 	}
-	catch (const std::exception&) {
-    }
-	if (pos != part.substr(start, end).length())
-		return false;
 	return true;
 }
 
 bool isDouble(std::string const& part) {
-	size_t	pos = 0;
-	double	nb = 0;
-	try {
-		nb = std::stod(part, &pos);
-	}
-	catch (const std::exception&) {
-    }
-	if (pos != part.length())
+	std::stringstream ss(part);
+	double nb = 0;
+	
+	ss >> nb;
+	if (ss.fail() || !ss.eof())
 		return false;
 	if (nb > INT_MAX)
 		throw (BitcoinExchange::LargeNb());
@@ -206,7 +211,7 @@ void	BitcoinExchange::globalCheck(std::string line, std::string const& delimiter
 	if (!isInt(fstPart, 0, 4) || !isInt(fstPart, 5, 2)
 		|| !isInt(fstPart, 8, 2))
 		throw (BitcoinExchange::WrongGlobalSyntax());
-
+		
 	std::string	lstPart(line, delimiterPos + 2, line.length() - delimiterPos + 2);
 	if (!isDouble(lstPart))
 		throw (BitcoinExchange::WrongGlobalSyntax());
@@ -226,7 +231,7 @@ void	BitcoinExchange::dateCheck(std::string date) {
 void	BitcoinExchange::treatInputFile(std::string const& filename) {
 	std::ifstream	file (filename.c_str());
 	std::string		line; 
-	
+
 	getline(file, line);
 	if (line != "date | value")
 		throw (BitcoinExchange::WrongGlobalSyntax());
@@ -237,9 +242,9 @@ void	BitcoinExchange::treatInputFile(std::string const& filename) {
 			// checkSeparator(line);//si la syntaxe globale est respectee
 			// checkDateSyntax(line.substr(0, line.find(" ")));
 			globalCheck(line, "|");
-			std::string date(line, 0, 10);
-			std::cout << "[" << date << "]" << std::endl;
-			dateCheck(date);
+			// std::string date(line, 0, 10);
+			// std::cout << "[" << date << "]" << std::endl;
+			// dateCheck(date);
 			std::cout << line << std::endl;
 		}
 		catch (std::exception const& e) {
