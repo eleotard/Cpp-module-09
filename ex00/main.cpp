@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 18:57:00 by eleotard          #+#    #+#             */
-/*   Updated: 2023/08/31 19:32:49 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/08 16:42:14 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include <map>
 #include <fstream>
 #include "BitcoinExchange.hpp"
-#include "Date.hpp"
 #include <string>
 
 int main(int argc, char **argv)

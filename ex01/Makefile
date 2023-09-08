@@ -6,14 +6,14 @@
 #    By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/18 18:40:07 by eleotard          #+#    #+#              #
-#    Updated: 2023/09/08 16:41:17 by eleotard         ###   ########.fr        #
+#    Updated: 2023/09/08 16:44:56 by eleotard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = btc
+NAME = RPN
 
 SRCS =	main.cpp \
-		BitcoinExchange.cpp \
+		RPN.cpp \
 
 OBJS = ${SRCS:%.cpp=%.o}
 

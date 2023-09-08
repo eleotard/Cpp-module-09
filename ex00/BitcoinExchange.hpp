@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 18:57:18 by eleotard          #+#    #+#             */
-/*   Updated: 2023/08/31 19:19:40 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/08 16:43:15 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,13 @@
 #include <exception>
 #include <vector>
 #include <map>
-#include "Date.hpp"
+
 # define YELLOW	"\033[33m"
 # define BLUE	"\033[34m"
 # define GREEN	"\033[32m"
 # define RED	"\033[31m"
 # define PURPLE	"\033[35m"
 # define DEFAULT    "\033[0m"
-
-class Date;
 
 class BitcoinExchange {
     public:
