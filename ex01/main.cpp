@@ -6,7 +6,7 @@
 /*   By: elsie <elsie@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 16:41:25 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/10 19:00:33 by elsie            ###   ########.fr       */
+/*   Updated: 2023/09/10 19:15:38 by elsie            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,7 @@
 #include "RPN.hpp"
 
 //peut-etre utiliser le container stack pour cet exo
-//pourquoi: éléments en acces contigu dans la memoire
-//pratique pour acceder souvent par indices aux elements
-
+//pck juste besoin de lacces aux deux element du dessus en permanence
 //2*(5+6) => 2 5 6 + *
 
 int	CheckCharacters(std::string &s) {
