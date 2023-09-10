@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
+/*   By: elsie <elsie@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 18:56:12 by eleotard          #+#    #+#             */
-/*   Updated: 2023/08/31 19:29:36 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/10 19:12:04 by elsie            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,9 @@ void BitcoinExchange::setDatabase(std::string const& filename) {
 	}
 	else {
         getline(file, line);
-		if (line != "date,exchange_rate")
-			throw (BitcoinExchange::WrongDataSyntax());
+		if (line != "date,exchange_rate") {
+			file.close();
+			throw (BitcoinExchange::WrongDataSyntax());}
 		while (getline(file, line)) {
 			i = line.find(delimiter);
 			std::string token1 = line.substr(0, i);
@@ -198,9 +199,14 @@ void	BitcoinExchange::treatInputFile(std::string const& filename) {
 	std::string		line;
 	double			result = 0;
 
+	if (!file.is_open()) {
+		file.close();
+		throw (BitcoinExchange::WrongFile());
+	}
 	getline(file, line);
-	if (line != "date | value")
-		throw (BitcoinExchange::WrongGlobalSyntax());
+	if (line != "date | value") {
+		file.close();
+		throw (BitcoinExchange::WrongGlobalSyntax());}
 	
 	while(getline(file, line)) {
 		try {
@@ -220,4 +226,5 @@ void	BitcoinExchange::treatInputFile(std::string const& filename) {
 			std::cerr << DEFAULT << std::endl;
 		}
 	}
+	file.close();
 }
