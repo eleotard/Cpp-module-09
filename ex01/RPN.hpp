@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RPN.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
+/*   By: elsie <elsie@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 19:34:23 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/08 20:52:59 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/10 18:51:57 by elsie            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 # define RPN_HPP
 
 #include <iostream>
+#include <sstream>
 #include <stack>
+#include <limits.h>
 
 # define YELLOW	"\033[33m"
 # define BLUE	"\033[34m"
@@ -25,32 +27,30 @@
 
 class RPN {
 	public:
-		RPN(std::string const& input);
+		RPN();
 		RPN(RPN const& src);
 		~RPN();
 		RPN &operator=(RPN const& src);
 		
+		void	printStack();
 		class WrongFormat: public std::exception {
 			public:
                 virtual const char *what() const throw() {
                     return ("Error: wrong RPN input format");
                 }
 		};
-			
-		void	setStack(std::stack<int> const& st);
-		void	setOp(std::string const& op);
-		void	setInput(std::string const& input);
-		std::stack<int> getStack(void) const;
-		std::string		getOp(void) const;
-		std::string		getInput(void) const;
 		
-		void	checkInputFormat();
+		void	addition();
+		void	substraction();
+		void	multiplication();
+		void	division();
+		
+		std::string calcul(std::string input);
+		
+		//void	checkInputFormat();
 		
 	private:
-		RPN();
 		std::stack<int>	_st;
-		std::string		_op;
-		std::string		_input;
 };
 
 #endif

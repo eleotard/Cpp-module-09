@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
+/*   By: elsie <elsie@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 16:41:25 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/08 20:54:38 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/10 19:00:33 by elsie            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,53 +22,6 @@
 //pratique pour acceder souvent par indices aux elements
 
 //2*(5+6) => 2 5 6 + *
-int	recupNb(std::string const& s) {
-	std::stringstream	ss;
-	int					nb = 0;
-	ss << s;
-	ss >> nb;
-	if (ss.fail() || !ss.eof())
-		throw (std::exception());
-	return (nb);
-}
-
-void	printStack(std::stack<int> st) {
-	while (!st.empty()) {
-		std::cout << st.top() << std::endl;
-		st.pop();
-	}
-}
-
-std::stack<int> recupData(std::string s){
-	std::string::iterator it = s.begin();
-	std::string::iterator ite = s.end();
-	std::string::iterator tmp = s.begin();
-	std::stack<int> st;
-	int nb = 0;
-	
-	while (it != ite) {
-		while (*it == ' ' && it != ite)
-			it++;
-		tmp = it;
-		while (*it != ' ' && it != ite)
-			it++;
-		std::string buff(tmp, it);
-		std::cout << "string = " << "[" << buff << "]" << std::endl;
-		tmp = it;
-		std::stringstream ss;
-		ss << buff;
-		ss >> nb;
-		std::cout << "nb = " << nb << std::endl;
-		if (ss.fail() || !ss.eof())
-			throw (std::exception());
-		st.push(nb);
-	}
-	return (st);
-}
-
-
-
-
 
 int	CheckCharacters(std::string &s) {
 	size_t i;
@@ -107,39 +60,15 @@ int	main(int argc, char **argv) {
 	if (err)
 		return (err);
 
-	std::string data(argv[1]);
+	RPN rpn;
+	std::string input(argv[1]);
+	std::string result;
 	
-	RPN obj(data);
-	try
-	{
-		obj.checkInputFormat();
-		
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-
-
-	
-
-
-
-
-
-	
-	// RPN obj;
-	// try
-	// {
-	// 	std::stack<int> st;
-	// 	st = recupData(data);
-	// 	printStack(st);
-	// }
-	// catch(const std::exception& e)
-	// {
-	// 	std::cerr << e.what() << '\n';
-	// }
-	
+	result = rpn.calcul(input);
+	if (result == "Error")
+		std::cerr << result << std::endl;
+	else
+		std::cout << result << std::endl;
 	
 	return (0);
 }
