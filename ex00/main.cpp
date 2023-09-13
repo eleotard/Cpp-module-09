@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 18:57:00 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/08 16:42:14 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/11 18:45:13 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,12 @@
 
 int main(int argc, char **argv)
 {
-	(void)argc;
-	(void)argv;
 	if (argc <= 1)
-		return (std::cerr << "Error: could not open file." << std::endl, 1);
+		return (std::cerr << "Error: 1 filename should be used as an argument." << std::endl, 1);
+	if (argc != 2)
+		return (std::cerr << "Error: only 1 filename should be used as an argument." << std::endl, 2);
 	if (!argv[1][0])
-		return (std::cerr << "Error: empty argument." << std::endl, 2);
+		return (std::cerr << "Error: empty argument." << std::endl, 3);
 	
 	BitcoinExchange b;
 	try {

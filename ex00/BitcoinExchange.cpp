@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elsie <elsie@student.42.fr>                +#+  +:+       +#+        */
+/*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 18:56:12 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/10 19:12:04 by elsie            ###   ########.fr       */
+/*   Updated: 2023/09/11 18:32:03 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,16 +45,19 @@ void BitcoinExchange::setDatabase(std::string const& filename) {
 	float			nb = 0;
 	
 	if (!file.is_open()) {
-		file.close();
 		throw (BitcoinExchange::WrongFile());
 	}
 	else {
         getline(file, line);
-		if (line != "date,exchange_rate") {
+		if (line != "date,exchange_rate" || line.empty() || file.eof()) {
 			file.close();
 			throw (BitcoinExchange::WrongDataSyntax());}
 		while (getline(file, line)) {
 			i = line.find(delimiter);
+			if (i == std::string::npos) {
+				file.close();
+				throw (BitcoinExchange::WrongDataSyntax());
+			}
 			std::string token1 = line.substr(0, i);
 			std::string token2 = line.substr(i + 1, *line.end() - i);
 			std::stringstream ss(token2);
@@ -200,11 +203,10 @@ void	BitcoinExchange::treatInputFile(std::string const& filename) {
 	double			result = 0;
 
 	if (!file.is_open()) {
-		file.close();
 		throw (BitcoinExchange::WrongFile());
 	}
 	getline(file, line);
-	if (line != "date | value") {
+	if (line != "date | value" || line.empty() || file.eof()) {
 		file.close();
 		throw (BitcoinExchange::WrongGlobalSyntax());}
 	
