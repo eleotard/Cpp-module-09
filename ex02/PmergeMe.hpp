@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 18:37:12 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/13 17:46:11 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/13 20:15:21 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,13 @@
 #include <sstream>
 #include <limits.h>
 #include <exception>
+
+# define YELLOW	"\033[33m"
+# define BLUE	"\033[34m"
+# define GREEN	"\033[32m"
+# define RED	"\033[31m"
+# define PURPLE	"\033[35m"
+# define DEFAULT    "\033[0m"
 
 class PmergeMe {
 	public:
@@ -35,8 +42,18 @@ class PmergeMe {
 		
 		void	printVector();
 		void	setVector(char **argv);
+		bool	IsPowerOfTwo(int nb);
+		void	makeVectSizePowerOfTwo();
+		void	fordJohnson(size_t size);
+	
+		std::vector<int> &getVector();
+		size_t	getVectorSize() const;
 	private:
-		std::vector<int> _vect;
+		void	setImpair();
+		std::vector<int>	_vect;
+		bool				_impair;
+		int					_saveLast;
+		int					_initialSize;
 };
 
 #endif
