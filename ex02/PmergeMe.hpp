@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 18:37:12 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/13 20:15:21 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/14 18:54:49 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,18 +36,23 @@ class PmergeMe {
 			}
 		};
 		PmergeMe();
+		PmergeMe(char **argv);
 		~PmergeMe();
 		PmergeMe(PmergeMe const& src);
 		PmergeMe &operator=(PmergeMe const& src);
 		
-		void	printVector();
 		void	setVector(char **argv);
-		bool	IsPowerOfTwo(int nb);
-		void	makeVectSizePowerOfTwo();
-		void	fordJohnson(size_t size);
+		std::vector<std::vector<int> > &splitVect(std::vector<int> &v, std::vector<std::vector<int> > &pairs);
+		std::vector<std::vector<int> > &sortEachPair(std::vector<std::vector<int> > & pairs);
+		void	printPairs(std::vector<std::vector<int> > &pairs);
+		
+		// void	printVector();
+		// bool	IsPowerOfTwo(int nb);
+		// void	makeVectSizePowerOfTwo();
+		// void	fordJohnson(size_t size);
 	
-		std::vector<int> &getVector();
-		size_t	getVectorSize() const;
+		// std::vector<int> &getVector();
+		// size_t	getVectorSize() const;
 	private:
 		void	setImpair();
 		std::vector<int>	_vect;

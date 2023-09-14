@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 18:37:19 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/13 20:14:06 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/14 17:36:07 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,13 @@ int main(int argc, char **argv)
 			return (std::cerr << "Error: wrong arguments: positive integers asked only. ex:./PmergeMe 3 5 9 7 4" << std::endl, 1);
 	}
 	
-	PmergeMe p;
 	try
 	{
-		p.setVector(argv);
+		PmergeMe p(argv);
+		//p.setVector(argv);
 		//p.printVector();
-		p.fordJohnson(p.getVectorSize());
-		p.printVector();
+		//p.fordJohnson(p.getVectorSize());
+		//p.printVector();
 	}
 	catch (std::exception const& e)
 	{
