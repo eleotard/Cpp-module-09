@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 18:37:12 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/14 18:54:49 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/16 19:54:00 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,9 @@
 # define PURPLE	"\033[35m"
 # define DEFAULT    "\033[0m"
 
+typedef std::vector<std::vector<int > > t_vvect;
+typedef std::vector<int> t_vect;
+
 class PmergeMe {
 	public:
 		class OOR : public std::exception {
@@ -46,6 +49,12 @@ class PmergeMe {
 		std::vector<std::vector<int> > &sortEachPair(std::vector<std::vector<int> > & pairs);
 		void	printPairs(std::vector<std::vector<int> > &pairs);
 		
+		
+		
+		t_vvect &getVect();
+		std::vector<int> merge_insert(t_vvect &vect);
+		int makePairs(t_vvect &vect);
+		void	sortPairs(t_vvect &vect);
 		// void	printVector();
 		// bool	IsPowerOfTwo(int nb);
 		// void	makeVectSizePowerOfTwo();
@@ -55,7 +64,7 @@ class PmergeMe {
 		// size_t	getVectorSize() const;
 	private:
 		void	setImpair();
-		std::vector<int>	_vect;
+		t_vvect	_vect;
 		bool				_impair;
 		int					_saveLast;
 		int					_initialSize;
