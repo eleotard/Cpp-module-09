@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 18:37:15 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/16 20:32:30 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/19 18:30:15 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ PmergeMe::~PmergeMe() {}
 PmergeMe::PmergeMe(PmergeMe const& src) {*this = src; }
 
 PmergeMe &PmergeMe::operator=(PmergeMe const& src) {
-	_vect = src._vect;
+	_main_chain = src._main_chain;
 	return (*this);
 }
 
@@ -29,117 +29,194 @@ void	printVect(t_vect v) {
 	std::cout << std::endl;
 }
 
-void	printVvect(t_vvect &vect) {
-	for (size_t i = 0; i < vect.size(); i++){
-		std::cout << "vect[" << i << "] = ";
-		printVect(vect[i]);
-		std::cout << std::endl;
-	}
-}
-
-// PmergeMe::PmergeMe(char **argv) : _impair(false), _saveLast(0) {
-// 	std::vector<std::vector<int> > pairs;
-// 	setVector(argv); //set cont
-// 	pairs = splitVect(_vect, pairs);
-// 	pairs = sortEachPair(pairs);
-// 	printPairs(pairs);
+// void	printVvect(t_vvect &vect) {
+// 	for (size_t i = 0; i < vect.size(); i++){
+// 		std::cout << "vect[" << i << "] = ";
+// 		printVect(vect[i]);
+// 		std::cout << std::endl;
+// 	}
 // }
 
-PmergeMe::PmergeMe(char **argv) : _impair(false), _saveLast(0) {
-	t_vect sorted_list; 
-	setVector(argv);
+PmergeMe::PmergeMe(char **argv) {
+	t_vect sorted_list;
+	t_vect initial_vect;
 	
-	std::cout << GREEN << std::endl;
-	printVvect(getVect());
-	std::cout << std::endl;
+	initial_vect = setVector(argv);
 	
-	sortPairs(getVect());
+	// std::cout << GREEN << std::endl;
+	// printVect(initial_vect);
+	// std::cout << DEFAULT <<std::endl;
 	
-	std::cout << RED << std::endl;
-	printVvect(getVect());
-	std::cout << std::endl;
-	
-	sorted_list = merge_insert(getVect());
-
+	merge_insert(initial_vect);
+	sorted_list = getMainChain();
 }
 
-void	PmergeMe::setVector(char **argv) {
-	int	nb;
+t_vect	PmergeMe::setVector(char **argv) {
+	int		nb;
+	t_vect	initial_vect;
+	
 	for (int i = 1; argv[i]; i++) {
 		std::stringstream ss(argv[i]);
 		ss >> nb;
 		if (ss.fail() || !ss.eof())
 			throw (PmergeMe::OOR());
-		_vect.push_back(std::vector<int>(1, nb));
+		initial_vect.push_back(nb);
 	}
+	return (initial_vect);
+}
+
+t_vect PmergeMe::getMainChain() const {
+	return (_main_chain);
 }
 
 
-t_vvect &PmergeMe::getVect() {
-	return (_vect);
-}
+void	PmergeMe::printPvect(p_vect pairs) {
+	p_iterator	it;
+	p_iterator	ite = pairs.end();
 
-
-
-int PmergeMe::makePairs(t_vvect &vect) {
-	for (size_t i = 0; i < vect.size(); i++) {
-		t_vect &cur(vect[i]);
-		if ((i + 1) < vect.size()) {
-			t_vect next(vect[i + 1]);
-			cur.insert(cur.end(), next.begin(), next.end());
-			vect.erase(vect.begin() + i + 1);
-			//printVect(cur);
-		}
-		else {
-			//printVvect(vect);
-			return (1);
-		}
+	for (it = pairs.begin(); it != ite; it++) {
+		std::cout << it->first << " " << it->second << std::endl;
 	}
-		//printVvect(vect);
-		return (0);
-}
 
-void	PmergeMe::sortPairs(t_vvect &vect) {
-	for (size_t i = 0; i < vect.size(); i += 2) {
-		if (i < vect.size() - 1) {
-			if (vect[i][0] > vect[i + 1][0]) {
-				std::cout << "passe a i = " << i << std::endl;
-				// t_vect tmp(vect[i]);
-				// vect[i].clear();
-				// vect[i] = vect[i + 1];
-				// vect[i + 1].clear();
-				// vect[i + 1] = tmp;
-				vect[i].swap(vect[i + 1]);
-				}
-			}
-	}
-}
-
-
-std::vector<int> PmergeMe::merge_insert(t_vvect &vect) {
-	std::vector<int> v(2, 100);
-	std::vector<int> staddler;
-	
-	if (makePairs(vect) == 1) {
-		staddler = vect.back();
-		vect.pop_back();
-	}
-	
-	std::cout << YELLOW << std::endl;
-	printVvect(vect);
 	std::cout << std::endl;
-	
-	sortPairs(vect);
-	
-	std::cout << BLUE << std::endl;
-	printVvect(vect);
-	std::cout << std::endl;
-	
-	if (vect.size() <= 1)
-		return (v);
-	merge_insert(vect);
-	return (v);
 }
+
+void	PmergeMe::printVect(t_vect list) {
+	std::vector<int>::iterator	it;
+	std::vector<int>::iterator	ite = list.end();
+
+	for (it = list.begin(); it != ite; it++) {
+		std::cout << *it << " ";
+	}
+	std::cout << std::endl;
+}
+
+p_vect	PmergeMe::makePairs(t_vect &list, int *solo) {
+	p_vect	pairs;
+	
+	for (size_t i = 0; i < list.size(); i += 2) {
+		if ((i + 1) != list.size())
+			pairs.push_back(std::make_pair(list[i], list[i + 1]));
+		else
+			*solo = list[i];
+	}
+	return (pairs);
+}
+
+void	PmergeMe::sortPairs(p_vect &pairs) {
+	p_iterator	it;
+	p_iterator	ite = pairs.end();
+	int			tmp;
+
+	for (it = pairs.begin(); it != ite; it++) {
+		if (it->first < it->second) {
+			tmp = it->first;
+			it->first = it->second;
+			it->second = tmp;
+		}
+	}
+}
+
+t_vect	PmergeMe::createNewList(p_vect &pairs) {
+	p_iterator	it;
+	p_iterator	ite = pairs.end();
+	t_vect		new_list;
+	
+	for (it = pairs.begin(); it != ite; it++) {
+		new_list.push_back(it->first);
+	}
+	return (new_list);
+}
+
+void PmergeMe::merge_insert(t_vect &list) {
+	p_vect	pairs;
+	t_vect	new_list;
+	int		solo = -1;
+	
+	printVect(list);
+	if (list.size() == 1)
+		return ;
+		
+	pairs = makePairs(list, &solo);
+
+	std::cout << RED << "PAIRS:" << std::endl;
+	printPvect(pairs);
+	std::cout << DEFAULT <<std::endl;
+	
+	sortPairs(pairs);
+	
+	std::cout << BLUE << "SORTED:" << std::endl;
+	printPvect(pairs);
+	std::cout << DEFAULT <<std::endl;
+	
+	new_list = createNewList(pairs);
+	merge_insert(new_list);
+		
+	/*******************************Insertion***************/	
+	//->>>>>>>>>>>>>>//if (solo != -1)
+	
+	
+	
+	return ;
+}
+
+
+
+// void	PmergeMe::sortPairs(t_vvect &vect) {
+// 	for (size_t i = 0; i < vect.size(); i += 2) {
+// 		if (i < vect.size() - 1) {
+// 			if (vect[i][0] < vect[i + 1][0]) {
+// 				std::cout << "passe a i = " << i << std::endl;
+// 				// t_vect tmp(vect[i]);
+// 				// vect[i].clear();
+// 				// vect[i] = vect[i + 1];
+// 				// vect[i + 1].clear();
+// 				// vect[i + 1] = tmp;
+// 				vect[i].swap(vect[i + 1]);
+// 				}
+// 			}
+// 	}
+// }
+
+//suite de Jacobsthal
+//binary comparaison
+
+// void	PmergeMe::reMakePairs(t_vvect &vect) {
+// 	t_vvect t_tmp;
+// 	for (size_t i = 0; i < vect[0].size(); i = i + 2) {
+// 			t_vect tmp;
+// 			tmp.push_back(vect[0][i]);
+// 			tmp.push_back(vect[0][i + 1]);
+// 			t_tmp.push_back(tmp);
+// 		}
+// 		vect = t_tmp;
+// }
+
+// void	PmergeMe::insertFirstElement(t_vvect &vect) {
+// 	t_vect tmp(1, vect[0][0]);
+// 	t_vect second(1, vect[0][1]);
+// 	vect.insert(vect.begin(), tmp);
+// 	vect[1].swap(second);
+// }
+
+// int	isStillPairs(t_vvect &vect) {
+// 	for (size_t i = 0; i < vect.size(); i++) {
+// 		if (vect[i].size() > 1)
+// 			return (1);
+// 	}
+// 	return (0);
+// }
+
+// t_vvect createStaddler(t_vect rest) {
+// 	t_vvect result;
+// 	for (size_t i = 0; i < rest.size(); i++) {
+// 		t_vect tmp(rest[i]);
+// 		result.push_back(tmp);
+// 	}
+// 	return (result);
+// }
+
+
 
 
 

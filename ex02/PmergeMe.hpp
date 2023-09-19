@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 18:37:12 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/16 19:54:00 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/19 18:25:23 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@
 
 typedef std::vector<std::vector<int > > t_vvect;
 typedef std::vector<int> t_vect;
+typedef std::vector<std::pair<int, int> > p_vect;
+typedef std::vector<std::pair<int, int> >::iterator p_iterator;
+
 
 class PmergeMe {
 	public:
@@ -44,30 +47,19 @@ class PmergeMe {
 		PmergeMe(PmergeMe const& src);
 		PmergeMe &operator=(PmergeMe const& src);
 		
-		void	setVector(char **argv);
-		std::vector<std::vector<int> > &splitVect(std::vector<int> &v, std::vector<std::vector<int> > &pairs);
-		std::vector<std::vector<int> > &sortEachPair(std::vector<std::vector<int> > & pairs);
-		void	printPairs(std::vector<std::vector<int> > &pairs);
+		void	printVect(t_vect list);
+		void	printPvect(p_vect pairs);
 		
+		t_vect	setVector(char **argv);
+		void	merge_insert(t_vect &list);
+		p_vect	makePairs(t_vect &list, int *solo);
+		void	sortPairs(p_vect &pairs);
+		t_vect	createNewList(p_vect &pairs);
 		
+		t_vect	getMainChain() const;
 		
-		t_vvect &getVect();
-		std::vector<int> merge_insert(t_vvect &vect);
-		int makePairs(t_vvect &vect);
-		void	sortPairs(t_vvect &vect);
-		// void	printVector();
-		// bool	IsPowerOfTwo(int nb);
-		// void	makeVectSizePowerOfTwo();
-		// void	fordJohnson(size_t size);
-	
-		// std::vector<int> &getVector();
-		// size_t	getVectorSize() const;
 	private:
-		void	setImpair();
-		t_vvect	_vect;
-		bool				_impair;
-		int					_saveLast;
-		int					_initialSize;
+		t_vect	_main_chain;
 };
 
 #endif
