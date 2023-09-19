@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 18:37:15 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/19 18:30:15 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/19 20:33:13 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,14 +128,68 @@ t_vect	PmergeMe::createNewList(p_vect &pairs) {
 	return (new_list);
 }
 
+t_vvect	pairsToDoubleVect(p_vect pairs) {
+	t_vvect vect;
+	t_vect	tmp;
+	p_iterator	it;
+	p_iterator	ite = pairs.end();
+	
+	for(it = pairs.begin(); it != ite; it++) {
+		tmp.push_back(it->first);
+		tmp.push_back(it->second);
+		vect.push_back(tmp);
+	}
+
+	return (vect);
+}
+
+//sort le nombre de la suite jacobsthal associé à l'index envoyé
+int	jacobsthalNb(int jIndex) {
+	if (jIndex == 0)
+		return (0);
+	if (jIndex == 1)
+		return (1);
+	
+	int a = 0;
+	int b = 1;
+	int result;
+	int i = 2;
+
+	while (i <= jIndex) {
+		result = (2 * a) + b;
+		a = b;
+		b = result;
+		i++;
+	}
+	return (result);
+}
+
+
+
+// void	PmergeMe::insertionDichotomy(int nbtoInsert) {
+// 	int size = _main_chain.size();
+
+int	findFirstNbPair(p_vect pairs, int first) {
+	p_iterator	it;
+	p_iterator	ite = pairs.end();
+
+	for (it = pairs.begin(); it->first != first && it != ite; it++) {
+	}
+	return (it->second);
+}
+	
+// }
+
 void PmergeMe::merge_insert(t_vect &list) {
 	p_vect	pairs;
 	t_vect	new_list;
 	int		solo = -1;
 	
 	printVect(list);
-	if (list.size() == 1)
+	if (list.size() == 1) {
+		_main_chain.push_back(list[0]);
 		return ;
+	}
 		
 	pairs = makePairs(list, &solo);
 
@@ -155,6 +209,29 @@ void PmergeMe::merge_insert(t_vect &list) {
 	/*******************************Insertion***************/	
 	//->>>>>>>>>>>>>>//if (solo != -1)
 	
+	//en gros faut que je déploie le resultat dans la main chain
+	//et apres je garde acces aux paires dans larecursivite pour
+	//pouvoir continuer a la deployer pour le tour d'apres
+	
+	//t_vvect vect;
+
+	//LE PREMIER A METTRE DS LA MAIN CHAIN
+	_main_chain.insert(_main_chain.begin(), findFirstNbPair(pairs, _main_chain[0]));
+	// while (_main_chain.size() != list.size()) {
+	// 	//insert;
+	// }
+	
+	//printVect(_main_chain);
+
+	// vect = pairsToDoubleVect(pairs);
+	// if (vect.size() == 1) {
+	// 	_main_chain.insert(_main_chain.begin(), vect[0][0]);
+	// 	_main_chain.insert(_main_chain.begin(), vect[0][1]);
+	// 	// if (solo != 1)
+	// 	// 	insertionDichotomy(solo);
+	// 	printVect(_main_chain);
+	// }
+
 	
 	
 	return ;

@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 18:37:12 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/19 18:25:23 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/19 19:08:25 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ class PmergeMe {
 		p_vect	makePairs(t_vect &list, int *solo);
 		void	sortPairs(p_vect &pairs);
 		t_vect	createNewList(p_vect &pairs);
+
+		void	insertionDichotomy(int nbtoInsert);
 		
 		t_vect	getMainChain() const;
 		
