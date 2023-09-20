@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 18:37:15 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/19 20:33:13 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/20 19:28:28 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,9 @@ PmergeMe::PmergeMe(char **argv) {
 	
 	merge_insert(initial_vect);
 	sorted_list = getMainChain();
+	std::cout << GREEN << std::endl;
+	printVect(sorted_list);
+	std::cout << DEFAULT <<std::endl;
 }
 
 t_vect	PmergeMe::setVector(char **argv) {
@@ -144,15 +147,15 @@ t_vvect	pairsToDoubleVect(p_vect pairs) {
 }
 
 //sort le nombre de la suite jacobsthal associé à l'index envoyé
-int	jacobsthalNb(int jIndex) {
+size_t	jacobsthalNb(int jIndex) {
 	if (jIndex == 0)
 		return (0);
 	if (jIndex == 1)
 		return (1);
 	
-	int a = 0;
-	int b = 1;
-	int result;
+	size_t a = 0;
+	size_t b = 1;
+	size_t result;
 	int i = 2;
 
 	while (i <= jIndex) {
@@ -169,16 +172,41 @@ int	jacobsthalNb(int jIndex) {
 // void	PmergeMe::insertionDichotomy(int nbtoInsert) {
 // 	int size = _main_chain.size();
 
+	
+void	PmergeMe::insertNbInMainChain(int nb, int index) {
+	
+	int	start = 0;
+	int end = index;
+	int mid;
+
+	while (start <= end) {
+		mid = start + (end - start) / 2;
+		if (nb < _main_chain[mid]) {
+			end = mid - 1;
+		}
+		else if (nb > _main_chain[mid]) {
+			start = mid + 1;
+		}
+		else
+			break ;
+	}
+	// if (nb < _main_chain[start])
+	// 	_main_chain.insert(_main_chain.begin() + (start - 1), nb);
+	// else if (nb >= _main_chain[start])
+		_main_chain.insert(_main_chain.begin() + start, nb);
+}
+
 int	findFirstNbPair(p_vect pairs, int first) {
 	p_iterator	it;
 	p_iterator	ite = pairs.end();
 
 	for (it = pairs.begin(); it->first != first && it != ite; it++) {
 	}
+	std::cout << "FT FIND SND: "<< GREEN << it->second << std::endl;
+	if (it == ite)
+		return (-1);
 	return (it->second);
 }
-	
-// }
 
 void PmergeMe::merge_insert(t_vect &list) {
 	p_vect	pairs;
@@ -193,15 +221,15 @@ void PmergeMe::merge_insert(t_vect &list) {
 		
 	pairs = makePairs(list, &solo);
 
-	std::cout << RED << "PAIRS:" << std::endl;
-	printPvect(pairs);
-	std::cout << DEFAULT <<std::endl;
+	// std::cout << RED << "PAIRS:" << std::endl;
+	// printPvect(pairs);
+	// std::cout << DEFAULT <<std::endl;
 	
 	sortPairs(pairs);
 	
-	std::cout << BLUE << "SORTED:" << std::endl;
-	printPvect(pairs);
-	std::cout << DEFAULT <<std::endl;
+	// std::cout << BLUE << "SORTED:" << std::endl;
+	// printPvect(pairs);
+	// std::cout << DEFAULT <<std::endl;
 	
 	new_list = createNewList(pairs);
 	merge_insert(new_list);
@@ -216,233 +244,138 @@ void PmergeMe::merge_insert(t_vect &list) {
 	//t_vvect vect;
 
 	//LE PREMIER A METTRE DS LA MAIN CHAIN
+	std::cout << RED;
+	printVect(_main_chain);
+	std::cout << DEFAULT << std::endl;
+	printPvect(pairs);
 	_main_chain.insert(_main_chain.begin(), findFirstNbPair(pairs, _main_chain[0]));
-	// while (_main_chain.size() != list.size()) {
-	// 	//insert;
+	//std::cout << BLUE << "1srt Nbtoinsert: " << findFirstNbPair(pairs, _main_chain[0]) << DEFAULT << std::endl;
+	std::cout << RED;
+	printVect(_main_chain);
+	std::cout << DEFAULT << std::endl;
+	// if (findFirstNbPair(pairs, _main_chain[0]) == -1 && solo != -1) {
+	// 	insertNbInMainChain(solo, _main_chain.size() - 1);
+	// 	return ;
 	// }
-	
-	//printVect(_main_chain);
+	// else if (findFirstNbPair(pairs, _main_chain[0]) == -1 && solo == -1)
+	// 	return ;
+		
+	int js_index = 2;
+	size_t i = 0;
+	size_t j = 0;
+	size_t	save = 0;
+	size_t	stop = 0;
+	int	nbToInsert = 0;
+	if (solo == -1) {
+		while (_main_chain.size() != list.size() && i < _main_chain.size() && stop < _main_chain.size()) {
+			js_index++;
+			if (jacobsthalNb(js_index) >= _main_chain.size()) {
+				std::cout << BLUE << "passe jn > s " << jacobsthalNb(js_index) << DEFAULT << std::endl;
+				std::cout << BLUE << "stop  = " << stop << DEFAULT << std::endl;
+				nbToInsert = findFirstNbPair(pairs, _main_chain[stop]);
+				if (nbToInsert != -1)
+					insertNbInMainChain(nbToInsert, stop);
+				// else 
+				// 	break ;
+				std::cout << RED;
+				printVect(_main_chain);
+				std::cout << DEFAULT << std::endl;
+				stop++;
+			}
+			else {
+				std::cout << BLUE << "passe jn < s " << jacobsthalNb(js_index) << DEFAULT << std::endl;
+				save = i;
+				while (i < jacobsthalNb(js_index))
+					i++;
+				stop = i;
+				nbToInsert = findFirstNbPair(pairs, _main_chain[i]); // <=> _main_chain[jacobsthalNb(js_index)]
+				//std::cout << BLUE << "Nbtoinsert: " << nbToInsert << DEFAULT << std::endl;
+				if (nbToInsert != -1)
+					insertNbInMainChain(nbToInsert, i);
+				// else 
+				// 	break ;
+				std::cout << RED;
+				printVect(_main_chain);
+				std::cout << DEFAULT << std::endl;
+				j = i;
+				while (j < save) {
+					nbToInsert = findFirstNbPair(pairs, _main_chain[j]);
+					//std::cout << BLUE << "Nbtoinsert: " << nbToInsert << DEFAULT << std::endl;
+					if (nbToInsert != -1)
+						insertNbInMainChain(nbToInsert, j);
+					else 
+						break ;
+					std::cout << RED;
+					printVect(_main_chain);
+					std::cout << DEFAULT << std::endl;
+					j--;
+				}
+			}
+		}
+	}
+	else {
+		if (_main_chain.size() == list.size() - 1) {
+			insertNbInMainChain(solo, _main_chain.size() - 1);
+			std::cout << BLUE << "Nbtoinsert: " << solo << DEFAULT << std::endl;
+			std::cout << RED;
+			printVect(_main_chain);
+			std::cout << DEFAULT << std::endl;
+			return ;
+		}
+		while (_main_chain.size() < list.size() && i < _main_chain.size()) {
+			js_index++;
+			if (jacobsthalNb(js_index) >= _main_chain.size()) {
+				std::cout << BLUE << "passe SOLO jn > s " << jacobsthalNb(js_index) << DEFAULT << std::endl;
+				nbToInsert = findFirstNbPair(pairs, _main_chain[i]);
+				//std::cout << BLUE << "Nbtoinsert: " << nbToInsert << DEFAULT << std::endl;
+				if (nbToInsert != -1)
+					insertNbInMainChain(nbToInsert, i);
+				// else 
+				// 	break ;
+				std::cout << RED;
+				printVect(_main_chain);
+				std::cout << DEFAULT << std::endl;
+				i++;
+			}
+			else {
+				std::cout << BLUE << "passe SOLO jn < s " << jacobsthalNb(js_index) << DEFAULT << std::endl;
+				save = i;
+				while (i < jacobsthalNb(js_index))
+					i++;
+				nbToInsert = findFirstNbPair(pairs, _main_chain[i]); // <=> _main_chain[jacobsthalNb(js_index)]
+				//std::cout << BLUE << "Nbtoinsert: " << nbToInsert << DEFAULT << std::endl;
+				if (nbToInsert != -1)
+					insertNbInMainChain(nbToInsert, i);
+				// else 
+				// 	break ;
+				std::cout << RED;
+				printVect(_main_chain);
+				std::cout << DEFAULT << std::endl;
+				j = i;
+				while (j < save) {
+					nbToInsert = findFirstNbPair(pairs, _main_chain[j]);
+					//std::cout << BLUE << "Nbtoinsert: " << nbToInsert << DEFAULT << std::endl;
+					if (nbToInsert != -1)
+						insertNbInMainChain(nbToInsert, j);
+					else 
+						break ;
+					std::cout << RED;
+					printVect(_main_chain);
+					std::cout << DEFAULT << std::endl;
+					j--;
+				}
+			}
+		}
+		insertNbInMainChain(solo, _main_chain.size() - 1);
+		std::cout << BLUE << "Nbtoinsert: " << solo << DEFAULT << std::endl;
+		std::cout << RED;
+		printVect(_main_chain);
+		std::cout << DEFAULT << std::endl;
+	}
 
-	// vect = pairsToDoubleVect(pairs);
-	// if (vect.size() == 1) {
-	// 	_main_chain.insert(_main_chain.begin(), vect[0][0]);
-	// 	_main_chain.insert(_main_chain.begin(), vect[0][1]);
-	// 	// if (solo != 1)
-	// 	// 	insertionDichotomy(solo);
-	// 	printVect(_main_chain);
-	// }
-
-	
+	std::cout << YELLOW << std::endl;
+	printVect(_main_chain);
+	std::cout << DEFAULT <<std::endl;
 	
 	return ;
 }
-
-
-
-// void	PmergeMe::sortPairs(t_vvect &vect) {
-// 	for (size_t i = 0; i < vect.size(); i += 2) {
-// 		if (i < vect.size() - 1) {
-// 			if (vect[i][0] < vect[i + 1][0]) {
-// 				std::cout << "passe a i = " << i << std::endl;
-// 				// t_vect tmp(vect[i]);
-// 				// vect[i].clear();
-// 				// vect[i] = vect[i + 1];
-// 				// vect[i + 1].clear();
-// 				// vect[i + 1] = tmp;
-// 				vect[i].swap(vect[i + 1]);
-// 				}
-// 			}
-// 	}
-// }
-
-//suite de Jacobsthal
-//binary comparaison
-
-// void	PmergeMe::reMakePairs(t_vvect &vect) {
-// 	t_vvect t_tmp;
-// 	for (size_t i = 0; i < vect[0].size(); i = i + 2) {
-// 			t_vect tmp;
-// 			tmp.push_back(vect[0][i]);
-// 			tmp.push_back(vect[0][i + 1]);
-// 			t_tmp.push_back(tmp);
-// 		}
-// 		vect = t_tmp;
-// }
-
-// void	PmergeMe::insertFirstElement(t_vvect &vect) {
-// 	t_vect tmp(1, vect[0][0]);
-// 	t_vect second(1, vect[0][1]);
-// 	vect.insert(vect.begin(), tmp);
-// 	vect[1].swap(second);
-// }
-
-// int	isStillPairs(t_vvect &vect) {
-// 	for (size_t i = 0; i < vect.size(); i++) {
-// 		if (vect[i].size() > 1)
-// 			return (1);
-// 	}
-// 	return (0);
-// }
-
-// t_vvect createStaddler(t_vect rest) {
-// 	t_vvect result;
-// 	for (size_t i = 0; i < rest.size(); i++) {
-// 		t_vect tmp(rest[i]);
-// 		result.push_back(tmp);
-// 	}
-// 	return (result);
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// std::vector<std::vector<int> > &PmergeMe::splitVect(std::vector<int> &v, std::vector<std::vector<int> > &pairs) {
-// 	std::vector<int>				tmp_vect;
-
-// 	for (size_t i = 0; i < v.size(); i++) {
-// 		int	tmpSize = tmp_vect.size();
-		
-// 		if (tmpSize == 1) {
-// 			tmp_vect.push_back(v[i]);
-// 			pairs.push_back(tmp_vect);
-// 			tmp_vect.clear();
-// 		}
-// 		else if (pairs.size() * 2 == v.size() - 1) {
-// 			std::vector<int> singleValue;
-//             singleValue.push_back(v[i]);
-//             pairs.push_back(singleValue);
-// 		}
-// 		else if (tmpSize == 0) {
-// 			tmp_vect.push_back(v[i]);
-// 		}
-// 	}
-// 	return (pairs);
-// }
-
-// std::vector<std::vector<int> > &PmergeMe::sortEachPair(std::vector<std::vector<int> > & pairs) {
-// 	for (size_t i = 0; i < pairs.size(); i++) {
-// 		if (pairs[i].size() == 2) {
-// 			if (pairs[i][0] > pairs[i][1]) {
-// 				int tmp = pairs[i][0];
-// 				pairs[i][0] = pairs[i][1];
-// 				pairs[i][1] = tmp;
-// 			}
-// 		}
-// 	}
-// 	return (pairs);
-// }
-
-// void	PmergeMe::printPairs(std::vector<std::vector<int> > &pairs) {
-// 	for (size_t i = 0; i < pairs.size(); i++) {
-// 		std::vector<int> pair = pairs[i];
-// 		std::cout << YELLOW << "{";
-// 		for (size_t j = 0; j < pair.size(); j++) {
-// 			std::cout << pair[j] << " ";
-// 		}
-// 		std::cout << "}" << std::endl << DEFAULT << std::endl;
-// 	}
-// }
-
-// void	PmergeMe::setVector(char **argv) {
-// 	int	nb;
-// 	for (int i = 1; argv[i]; i++) {
-// 		std::stringstream ss(argv[i]);
-// 		ss >> nb;
-// 		if (ss.fail() || !ss.eof())
-// 			throw (PmergeMe::OOR());
-// 		_vect.push_back(nb);
-// 	}
-// 	_initialSize = _vect.size();
-
-	
-// 	setImpair();
-// 	// if (!IsPowerOfTwo(_vect.size())) {
-// 	// 	std::cout << "is not power of two" << std::endl;
-// 	// 	makeVectSizePowerOfTwo();
-// 	// }
-// }
-
-// void	PmergeMe::setImpair() {
-// 	if (_vect.size() % 2 == 1) {
-// 		_saveLast = _vect.back();
-// 		_vect.pop_back();
-// 		_impair = true;
-// 		std::cout << _saveLast << std::endl;
-// 	}
-// }
-
-// std::vector<int> &PmergeMe::getVector() {
-// 	return (_vect);
-// }
-
-// size_t	PmergeMe::getVectorSize() const{
-// 	return (_vect.size());
-// }
-
-// void	PmergeMe::fordJohnson(size_t size) {
-// 	int	tmp;
-// 	size_t mid = size / 2;
-// 	std::cout << RED << size << DEFAULT << std::endl;
-// 	size_t j = 0;
-// 	for (size_t i = 0; i < mid; i++) {
-// 		std::cout << "Comparaison entre " << _vect[i] << " et " << _vect[mid + j] << std::endl;
-// 		if (_vect[i] > _vect[mid + j]) {
-// 			tmp = _vect[i];
-// 			_vect[i] = _vect[mid + j];
-// 			_vect[mid + j] = tmp;
-// 		}
-// 		j++;
-// 	}
-// 	printVector();
-// 	// size_t halfSize = _vect.size() / 2;
-// 	// _vect.erase(_vect.begin() + halfSize, _vect.end());
-// 	// if (_vect.size() <= 1)
-// 	// 	return ;
-// 	if (size <= 1)
-// 		return ;
-// 	std::cout << "Passe" << std::endl;
-// 	fordJohnson(size / 2);
-// }
-
-// void	PmergeMe::fordJohnson(size_t size) {
-	
-// }
-// void	PmergeMe::printVector() {
-// 	for (size_t i = 0; i < _vect.size(); i++) {
-// 		std::cout << BLUE << _vect[i] << DEFAULT << std::endl;
-// 	}
-// 	std::cout << std::endl;
-// }
-
-// bool	PmergeMe::IsPowerOfTwo(int nb) {
-// 	if ((nb & (nb - 1)) == 0)
-// 		return true;
-// 	return false;
-// }
-
-// void	PmergeMe::makeVectSizePowerOfTwo() {
-// 	while ((_vect.size() & (_vect.size() - 1)) != 0) {
-// 		_vect.push_back(INT_MAX);
-// 	}
-// }
