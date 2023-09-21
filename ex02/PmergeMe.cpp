@@ -6,7 +6,7 @@
 /*   By: elsie <elsie@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 18:37:15 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/21 18:06:40 by elsie            ###   ########.fr       */
+/*   Updated: 2023/09/21 20:09:23 by elsie            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,15 @@ PmergeMe &PmergeMe::operator=(PmergeMe const& src) {
 	_jacobNbs = src._jacobNbs;
 	return (*this);
 }
+/*************************************LOGS***********************************/
+// double log2Factorial(int n) {
+//     double result = 0.0;
+//     for (int i = 1; i <= n; ++i) {
+//         result += std::log(static_cast<double>(i));
+//     }
+//     result /= std::log(2.0); // Conversion en logarithme base 2
+//     return result;
+// }
 
 /*************************************PRINTS***********************************/
 void	PmergeMe::printPvect(p_vect &pairs) const{
@@ -59,12 +68,12 @@ void	PmergeMe::printJacobNbs() const{
 }
 
 /*******************************CONSTRUCTOR_FTS********************************/
-PmergeMe::PmergeMe(char **argv) {
+PmergeMe::PmergeMe(char **argv) : _count(0) {
 	t_vect sorted_list;
 	t_vect initial_vect;
 
 	setJacobNbs();
-	//printJacobNbs();
+	setPowOfTwoLessOneNbs();
 
 	initial_vect = setVector(argv);
 	std::cout << "Before:" << '\t';
@@ -80,6 +89,9 @@ PmergeMe::PmergeMe(char **argv) {
 	// std::cout << GREEN << std::endl;
 	// printVect(sorted_list);
 	// std::cout << DEFAULT <<std::endl;
+	std::cout << "nb of comparaisons: " << _count << std::endl;
+	int n = initial_vect.size(); // Remplacez par la valeur de n pour laquelle vous souhaitez calculer log2(n!).
+	std::cout << "worse case: " << n * log2((n)) << std::endl;
 }
 
 t_vect	PmergeMe::setVector(char **argv) {
@@ -135,6 +147,31 @@ void	PmergeMe::setJacobNbs() {
 	}
 }
 
+/*******************************POWEROFTWOLESSONE********************************/
+//permet de faire des comparaisons optimales
+int	powOfTwoLessOneNb(int pIndex) {
+	return (std::pow(2, pIndex) - 1);
+}
+
+void	PmergeMe::setPowOfTwoLessOneNbs() {
+	int	n = 0;
+	while (n < 32) {
+		_powOfTwoLessOneNbs.push_back(powOfTwoLessOneNb(n));
+		n++;
+	}
+}
+
+size_t PmergeMe::previousPowOfTwoLessOne(int nb) {
+	t_vect::iterator it;
+	t_vect::iterator ite = _powOfTwoLessOneNbs.end();
+	t_vect::iterator save;
+
+	for (it = _powOfTwoLessOneNbs.begin(); it != ite && *it < nb ; it++) {
+		save = it;
+	}
+	return ((size_t)*save);
+}
+
 /********************FORD-JOHNSON MERGE-INSERT ALGORITHM***********************/
 p_vect	PmergeMe::makePairs(t_vect &list, int *solo) {
 	p_vect	pairs;
@@ -155,6 +192,7 @@ void	PmergeMe::sortPairs(p_vect &pairs) {
 
 	for (it = pairs.begin(); it != ite; it++) {
 		if (it->first < it->second) {
+			_count++;
 			tmp = it->first;
 			it->first = it->second;
 			it->second = tmp;
@@ -187,6 +225,14 @@ t_vect	PmergeMe::createVect(int a, int b) {
 	return (tmp);
 }
 
+int		PmergeMe::isPowOfTwoLessOneNbs(int nb) {
+	for (size_t i = 0; i < _powOfTwoLessOneNbs.size(); i++) {
+		if (nb == _powOfTwoLessOneNbs[i])
+			return (1);
+	}
+	return (0);
+}
+
 int		PmergeMe::isJacob(int nb) {
 	for (size_t i = 0; i < _jacobNbs.size(); i++) {
 		if (nb == _jacobNbs[i])
@@ -204,11 +250,14 @@ void	PmergeMe::insertNbInMainChain(int nb, int index) {
         mid = start + (end - start) / 2;
         if (nb < _main_chain[mid][0]) {
             end = mid - 1;
+			_count++;
         }
         else if (nb > _main_chain[mid][0]) {
             start = mid + 1;
+			_count++;
         }
         else {
+			_count++;
             start = mid;
             break;
         }
@@ -241,14 +290,27 @@ void	PmergeMe::doSort(p_vect &pairs, t_vect list, int solo) {
 
 	int nbToInsert = 0;
 	size_t i = 0;
+	size_t save;
 	for (; i < _main_chain.size(); i++) {
-		if (isJacob(i) && _main_chain[i][1] == 0) {
+		if (isPowOfTwoLessOneNbs(i) && _main_chain[i][1] == 0) {
 			nbToInsert = findFirstNbPair(pairs, _main_chain[i][0], i);
 			insertNbInMainChain(nbToInsert, i);
 			// std::cout << RED;
 			// printVvect(_main_chain);
 			// std::cout << DEFAULT << std::endl;
 			// printPvect(pairs);
+			save = i;
+			while (save > previousPowOfTwoLessOne(i)) {
+				if (_main_chain[save][1] == 0) {
+					nbToInsert = findFirstNbPair(pairs, _main_chain[save][0], save);
+					insertNbInMainChain(nbToInsert, save);
+					// std::cout << RED;
+					// printVvect(_main_chain);
+					// std::cout << DEFAULT << std::endl;
+					// printPvect(pairs);
+				}
+				save--;
+			}
 			doSort(pairs, list, solo);
 		}
 	}

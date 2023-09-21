@@ -6,7 +6,7 @@
 /*   By: elsie <elsie@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 18:37:12 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/21 16:34:22 by elsie            ###   ########.fr       */
+/*   Updated: 2023/09/21 19:29:50 by elsie            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@
 #include <sstream>
 #include <limits.h>
 #include <exception>
+#include <cmath>
+
+#include <bits/stdc++.h>
 
 # define YELLOW	"\033[33m"
 # define BLUE	"\033[34m"
@@ -58,6 +61,7 @@ class PmergeMe {
 		t_vect	setVector(char **argv);
 		t_vect	extractMainChainList();
 		void	setJacobNbs();
+		void	setPowOfTwoLessOneNbs();
 
 		/*ford johnson merge-insert algorithm*/
 		void	merge_insert(t_vect &list);
@@ -69,6 +73,10 @@ class PmergeMe {
 		void	resetInsertionState();
 		void	doSort(p_vect &pairs, t_vect list, int solo);
 		int		isJacob(int nb);
+		
+		int		isPowOfTwoLessOneNbs(int nb);
+		size_t		previousPowOfTwoLessOne(int nb);
+		
 		int		findFirstNbPair(p_vect &pairs, int first, int indexInMain);
 		void	insertNbInMainChain(int nb, int index);
 
@@ -79,6 +87,8 @@ class PmergeMe {
 		t_vvect	_main_chain;
 		t_vect	_final_chain;
 		t_vect	_jacobNbs;
+		t_vect	_powOfTwoLessOneNbs;
+		int		_count;
 };
 
 #endif
