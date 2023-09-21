@@ -6,7 +6,7 @@
 /*   By: elsie <elsie@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 18:37:12 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/21 14:05:36 by elsie            ###   ########.fr       */
+/*   Updated: 2023/09/21 16:06:01 by elsie            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,36 +41,40 @@ class PmergeMe {
 				return ("Error: input out of range (> INT_MAX)");
 			}
 		};
+
 		PmergeMe();
 		PmergeMe(char **argv);
 		~PmergeMe();
 		PmergeMe(PmergeMe const& src);
 		PmergeMe &operator=(PmergeMe const& src);
-		
-		void	printVect(t_vect list);
-		void	printPvect(p_vect pairs);
-		
+
+		/*prints*/
+		void	printVect(t_vect &list) const;
+		void	printVvect(t_vvect &vect)const;
+		void	printPvect(p_vect &pairs) const;
+		void	printJacobNbs() const;
+
+		/*constructor*/
 		t_vect	setVector(char **argv);
+		t_vect	extractMainChainList();
+		void	setJacobNbs();
+
+		/*ford johnson merge-insert algorithm*/
 		void	merge_insert(t_vect &list);
 		p_vect	makePairs(t_vect &list, int *solo);
 		void	sortPairs(p_vect &pairs);
 		t_vect	createNewList(p_vect &pairs);
-
-		void	insertionDichotomy(int nbtoInsert);
-		void	insertNbInMainChain(int nb, int index);
-		
-		t_vvect	getMainChain() const;
+		t_vect	createVect(int a, int b);
 
 		void	resetInsertionState();
-		int		findFirstNbPair(p_vect pairs, int first, int indexInMain);
-		t_vect	extractMainChainList();
-		t_vect	createVect(int a, int b);
 		void	doSort(p_vect pairs, t_vect list, int solo);
-
-		void	setJacobNbs();
-		void	printJacobNbs();
 		int		isJacob(int nb);
-		
+		int		findFirstNbPair(p_vect pairs, int first, int indexInMain);
+		void	insertNbInMainChain(int nb, int index);
+
+		/*get*/
+		t_vvect	getMainChain() const;
+
 	private:
 		t_vvect	_main_chain;
 		t_vect	_final_chain;
