@@ -6,7 +6,7 @@
 /*   By: elsie <elsie@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 18:37:15 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/21 15:05:23 by elsie            ###   ########.fr       */
+/*   Updated: 2023/09/21 18:06:40 by elsie            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,18 +64,22 @@ PmergeMe::PmergeMe(char **argv) {
 	t_vect initial_vect;
 
 	setJacobNbs();
-	printJacobNbs();
+	//printJacobNbs();
 
 	initial_vect = setVector(argv);
+	std::cout << "Before:" << '\t';
+	printVect(initial_vect);
 	// std::cout << GREEN << std::endl;
 	// printVect(initial_vect);
 	// std::cout << DEFAULT <<std::endl;
 	merge_insert(initial_vect);
 
 	sorted_list = extractMainChainList();
-	std::cout << GREEN << std::endl;
+	std::cout << "After:" << '\t';
 	printVect(sorted_list);
-	std::cout << DEFAULT <<std::endl;
+	// std::cout << GREEN << std::endl;
+	// printVect(sorted_list);
+	// std::cout << DEFAULT <<std::endl;
 }
 
 t_vect	PmergeMe::setVector(char **argv) {
@@ -192,38 +196,44 @@ int		PmergeMe::isJacob(int nb) {
 }
 	
 void	PmergeMe::insertNbInMainChain(int nb, int index) {
-	int	start = 0;
-	int end = index;
-	int mid;
+	int start = 0;
+    int end = index;
+    int mid;
 
-	while (start <= end) {
-		mid = start + (end - start) / 2;
-		if (nb < _main_chain[mid][0]) {
-			end = mid - 1;
-		}
-		else if (nb > _main_chain[mid][0]) {
-			start = mid + 1;
-		}
-		else
-			break ;
-	}
+    while (start <= end) {
+        mid = start + (end - start) / 2;
+        if (nb < _main_chain[mid][0]) {
+            end = mid - 1;
+        }
+        else if (nb > _main_chain[mid][0]) {
+            start = mid + 1;
+        }
+        else {
+            start = mid;
+            break;
+        }
+    }
+	//std::cout << YELLOW << "start: " << start << "end: "<< end << DEFAULT << std::endl; 
 	_main_chain.insert(_main_chain.begin() + start, createVect(nb, 1));
 }
 
-int PmergeMe::findFirstNbPair(p_vect pairs, int first, int indexInMain) {
+int PmergeMe::findFirstNbPair(p_vect &pairs, int first, int indexInMain) {
 	p_iterator	it;
 	p_iterator	ite = pairs.end();
+	int			result;
 
 	for (it = pairs.begin(); it->first != first && it != ite; it++) {
 	}
-	std::cout << "FT FIND SND: "<< GREEN << it->second << DEFAULT << " PAIRE ASSOCIEE: " << GREEN << it->first << std::endl;
+	//std::cout << "FT FIND SND: "<< GREEN << it->second << DEFAULT << " PAIRE ASSOCIEE: " << GREEN << it->first << std::endl;
 	if (it == ite)
 		return (-1);
 	_main_chain[indexInMain][1] = 1;
-	return (it->second);
+	result = it->second;
+	pairs.erase(it);
+	return (result);
 }
 
-void	PmergeMe::doSort(p_vect pairs, t_vect list, int solo) {
+void	PmergeMe::doSort(p_vect &pairs, t_vect list, int solo) {
 	if (solo == -1 && _main_chain.size() == list.size())
 			return ;
 	else if (solo != -1 && _main_chain.size() == list.size() - 1)
@@ -235,9 +245,10 @@ void	PmergeMe::doSort(p_vect pairs, t_vect list, int solo) {
 		if (isJacob(i) && _main_chain[i][1] == 0) {
 			nbToInsert = findFirstNbPair(pairs, _main_chain[i][0], i);
 			insertNbInMainChain(nbToInsert, i);
-			std::cout << RED;
-			printVvect(_main_chain);
-			std::cout << DEFAULT << std::endl;
+			// std::cout << RED;
+			// printVvect(_main_chain);
+			// std::cout << DEFAULT << std::endl;
+			// printPvect(pairs);
 			doSort(pairs, list, solo);
 		}
 	}
@@ -246,9 +257,10 @@ void	PmergeMe::doSort(p_vect pairs, t_vect list, int solo) {
 			if (_main_chain[i][1] == 0) {
 				nbToInsert = findFirstNbPair(pairs, _main_chain[i][0], i);
 				insertNbInMainChain(nbToInsert, i);
-				std::cout << RED;
-				printVvect(_main_chain);
-				std::cout << DEFAULT << std::endl;
+				// std::cout << RED;
+				// printVvect(_main_chain);
+				// std::cout << DEFAULT << std::endl;
+				// printPvect(pairs);
 				doSort(pairs, list, solo);
 			}
 		}
@@ -260,7 +272,7 @@ void PmergeMe::merge_insert(t_vect &list) {
 	t_vect	new_list;
 	int		solo = -1;
 
-	printVect(list);
+	//printVect(list);
 	if (list.size() == 1) {
 		_main_chain.push_back(createVect(list[0], 1));
 		return ;
@@ -281,23 +293,28 @@ void PmergeMe::merge_insert(t_vect &list) {
 	
 	/*******************************Insertion******************************/
 	resetInsertionState();
-
-	std::cout << DEFAULT << std::endl;
-	printPvect(pairs);
-	std::cout << RED;
-	printVvect(_main_chain);
-	std::cout << DEFAULT;
-	std::cout << GREEN << "liste: ";
-	printVect(list);
-	std::cout << DEFAULT;
+	// std::cout << DEFAULT << std::endl;
+	// printPvect(pairs);
+	// std::cout << RED;
+	// printVvect(_main_chain);
+	// std::cout << DEFAULT;
+	// std::cout << GREEN << "liste: ";
+	// printVect(list);
+	// std::cout << DEFAULT;
 
 	_main_chain.insert(_main_chain.begin(), createVect(findFirstNbPair(pairs, _main_chain[0][0], 0), 1));
+	// std::cout << RED;
+	// printVvect(_main_chain);
+	// std::cout << DEFAULT << std::endl;
+	// printPvect(pairs);
+	
 	doSort(pairs, list, solo);
+	
 	if (_main_chain.size() == list.size() - 1 && solo != -1) {
 		insertNbInMainChain(solo, _main_chain.size() - 1);
-		// std::cout << BLUE << "NbTO INSERTTTT: " << solo << DEFAULT << std::endl;
-		std::cout << RED;
-		printVvect(_main_chain);
-		std::cout << DEFAULT << std::endl;
+		// std::cout << BLUE << "DERNIER SOLO " << solo << DEFAULT << std::endl;
+		// std::cout << RED;
+		// printVvect(_main_chain);
+		// std::cout << DEFAULT << std::endl;
 	}
 }

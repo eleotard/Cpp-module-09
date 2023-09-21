@@ -6,7 +6,7 @@
 /*   By: elsie <elsie@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 18:37:12 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/21 16:06:01 by elsie            ###   ########.fr       */
+/*   Updated: 2023/09/21 16:34:22 by elsie            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,9 @@ class PmergeMe {
 		t_vect	createVect(int a, int b);
 
 		void	resetInsertionState();
-		void	doSort(p_vect pairs, t_vect list, int solo);
+		void	doSort(p_vect &pairs, t_vect list, int solo);
 		int		isJacob(int nb);
-		int		findFirstNbPair(p_vect pairs, int first, int indexInMain);
+		int		findFirstNbPair(p_vect &pairs, int first, int indexInMain);
 		void	insertNbInMainChain(int nb, int index);
 
 		/*get*/
