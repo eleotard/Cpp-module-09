@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PmergeMe.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
+/*   By: elsie <elsie@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 18:37:12 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/20 17:37:31 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/21 14:05:36 by elsie            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,10 +59,22 @@ class PmergeMe {
 		void	insertionDichotomy(int nbtoInsert);
 		void	insertNbInMainChain(int nb, int index);
 		
-		t_vect	getMainChain() const;
+		t_vvect	getMainChain() const;
+
+		void	resetInsertionState();
+		int		findFirstNbPair(p_vect pairs, int first, int indexInMain);
+		t_vect	extractMainChainList();
+		t_vect	createVect(int a, int b);
+		void	doSort(p_vect pairs, t_vect list, int solo);
+
+		void	setJacobNbs();
+		void	printJacobNbs();
+		int		isJacob(int nb);
 		
 	private:
-		t_vect	_main_chain;
+		t_vvect	_main_chain;
+		t_vect	_final_chain;
+		t_vect	_jacobNbs;
 };
 
 #endif

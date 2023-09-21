@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PmergeMe.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
+/*   By: elsie <elsie@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 18:37:15 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/20 19:28:28 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/21 14:26:53 by elsie            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,26 +29,37 @@ void	printVect(t_vect v) {
 	std::cout << std::endl;
 }
 
-// void	printVvect(t_vvect &vect) {
-// 	for (size_t i = 0; i < vect.size(); i++){
-// 		std::cout << "vect[" << i << "] = ";
-// 		printVect(vect[i]);
-// 		std::cout << std::endl;
-// 	}
-// }
+void	printVvect(t_vvect &vect) {
+	for (size_t i = 0; i < vect.size(); i++){
+		std::cout << "vect[" << i << "] = ";
+		printVect(vect[i]);
+		std::cout << std::endl;
+	}
+}
+
+t_vect	PmergeMe::extractMainChainList() {
+	t_vect tmp;
+
+	for (size_t i = 0; i < _main_chain.size(); i++) {
+		tmp.push_back(_main_chain[i][0]);
+	}
+	return (tmp);
+}
 
 PmergeMe::PmergeMe(char **argv) {
 	t_vect sorted_list;
 	t_vect initial_vect;
 	
+	setJacobNbs();
+	printJacobNbs();
+
 	initial_vect = setVector(argv);
-	
 	// std::cout << GREEN << std::endl;
 	// printVect(initial_vect);
 	// std::cout << DEFAULT <<std::endl;
-	
 	merge_insert(initial_vect);
-	sorted_list = getMainChain();
+
+	sorted_list = extractMainChainList();
 	std::cout << GREEN << std::endl;
 	printVect(sorted_list);
 	std::cout << DEFAULT <<std::endl;
@@ -68,7 +79,7 @@ t_vect	PmergeMe::setVector(char **argv) {
 	return (initial_vect);
 }
 
-t_vect PmergeMe::getMainChain() const {
+t_vvect PmergeMe::getMainChain() const {
 	return (_main_chain);
 }
 
@@ -146,16 +157,16 @@ t_vvect	pairsToDoubleVect(p_vect pairs) {
 	return (vect);
 }
 
-//sort le nombre de la suite jacobsthal associé à l'index envoyé
-size_t	jacobsthalNb(int jIndex) {
+//donne le nombre de la suite jacobsthal associé à l'index envoyé
+int	jacobsthalNb(int jIndex) {
 	if (jIndex == 0)
 		return (0);
 	if (jIndex == 1)
 		return (1);
 	
-	size_t a = 0;
-	size_t b = 1;
-	size_t result;
+	int a = 0;
+	int b = 1;
+	int result;
 	int i = 2;
 
 	while (i <= jIndex) {
@@ -167,11 +178,28 @@ size_t	jacobsthalNb(int jIndex) {
 	return (result);
 }
 
+void	PmergeMe::setJacobNbs() {
+	int	index = 2;
+	while (index < 30) {
+		_jacobNbs.push_back(jacobsthalNb(index));
+		index++;
+	}
+}
 
+void	PmergeMe::printJacobNbs() {
+	for (size_t i = 0; i < _jacobNbs.size(); i++) {
+		std::cout << GREEN << _jacobNbs[i] << " ";
+	}
+	std::cout << DEFAULT << std::endl;
+}
 
-// void	PmergeMe::insertionDichotomy(int nbtoInsert) {
-// 	int size = _main_chain.size();
-
+int		PmergeMe::isJacob(int nb) {
+	for (size_t i = 0; i < _jacobNbs.size(); i++) {
+		if (nb == _jacobNbs[i])
+			return (1);
+	}
+	return (0);
+}
 	
 void	PmergeMe::insertNbInMainChain(int nb, int index) {
 	
@@ -181,31 +209,75 @@ void	PmergeMe::insertNbInMainChain(int nb, int index) {
 
 	while (start <= end) {
 		mid = start + (end - start) / 2;
-		if (nb < _main_chain[mid]) {
+		if (nb < _main_chain[mid][0]) {
 			end = mid - 1;
 		}
-		else if (nb > _main_chain[mid]) {
+		else if (nb > _main_chain[mid][0]) {
 			start = mid + 1;
 		}
 		else
 			break ;
 	}
-	// if (nb < _main_chain[start])
-	// 	_main_chain.insert(_main_chain.begin() + (start - 1), nb);
-	// else if (nb >= _main_chain[start])
-		_main_chain.insert(_main_chain.begin() + start, nb);
+	_main_chain.insert(_main_chain.begin() + start, createVect(nb, 1));
 }
 
-int	findFirstNbPair(p_vect pairs, int first) {
+int PmergeMe::findFirstNbPair(p_vect pairs, int first, int indexInMain) {
 	p_iterator	it;
 	p_iterator	ite = pairs.end();
 
 	for (it = pairs.begin(); it->first != first && it != ite; it++) {
 	}
-	std::cout << "FT FIND SND: "<< GREEN << it->second << std::endl;
+	std::cout << "FT FIND SND: "<< GREEN << it->second << DEFAULT << " PAIRE ASSOCIEE: " << GREEN << it->first << std::endl;
 	if (it == ite)
 		return (-1);
+	_main_chain[indexInMain][1] = 1;
 	return (it->second);
+}
+
+t_vect	PmergeMe::createVect(int a, int b) {
+	t_vect tmp;
+	
+	tmp.push_back(a);
+	tmp.push_back(b);
+	return (tmp);
+}
+
+void	PmergeMe::resetInsertionState() {
+	for (size_t i = 0; i < _main_chain.size(); i++) {
+		_main_chain[i][1] = 0;
+	}
+}
+
+void	PmergeMe::doSort(p_vect pairs, t_vect list, int solo) {
+	if (solo == -1 && _main_chain.size() == list.size())
+			return ;
+	else if (solo != -1 && _main_chain.size() == list.size() - 1)
+			return ;
+	
+	int nbToInsert = 0;
+	size_t i = 0;
+	for (; i < _main_chain.size(); i++) {
+		if (isJacob(i) && _main_chain[i][1] == 0) {
+			nbToInsert = findFirstNbPair(pairs, _main_chain[i][0], i);
+			insertNbInMainChain(nbToInsert, i);
+			std::cout << RED;
+			printVvect(_main_chain);
+			std::cout << DEFAULT << std::endl;
+			doSort(pairs, list, solo);
+		}
+	}
+	if (i == _main_chain.size()) {
+		for (i = 0; i < _main_chain.size(); i++) {
+			if (_main_chain[i][1] == 0) {
+				nbToInsert = findFirstNbPair(pairs, _main_chain[i][0], i);
+				insertNbInMainChain(nbToInsert, i);
+				std::cout << RED;
+				printVvect(_main_chain);
+				std::cout << DEFAULT << std::endl;
+				doSort(pairs, list, solo);
+			}
+		}
+	}
 }
 
 void PmergeMe::merge_insert(t_vect &list) {
@@ -215,7 +287,7 @@ void PmergeMe::merge_insert(t_vect &list) {
 	
 	printVect(list);
 	if (list.size() == 1) {
-		_main_chain.push_back(list[0]);
+		_main_chain.push_back(createVect(list[0], 1));
 		return ;
 	}
 		
@@ -235,147 +307,43 @@ void PmergeMe::merge_insert(t_vect &list) {
 	merge_insert(new_list);
 		
 	/*******************************Insertion***************/	
-	//->>>>>>>>>>>>>>//if (solo != -1)
-	
-	//en gros faut que je déploie le resultat dans la main chain
-	//et apres je garde acces aux paires dans larecursivite pour
-	//pouvoir continuer a la deployer pour le tour d'apres
-	
-	//t_vvect vect;
 
-	//LE PREMIER A METTRE DS LA MAIN CHAIN
-	std::cout << RED;
-	printVect(_main_chain);
+
+	resetInsertionState();
+
 	std::cout << DEFAULT << std::endl;
 	printPvect(pairs);
-	_main_chain.insert(_main_chain.begin(), findFirstNbPair(pairs, _main_chain[0]));
-	//std::cout << BLUE << "1srt Nbtoinsert: " << findFirstNbPair(pairs, _main_chain[0]) << DEFAULT << std::endl;
 	std::cout << RED;
-	printVect(_main_chain);
-	std::cout << DEFAULT << std::endl;
-	// if (findFirstNbPair(pairs, _main_chain[0]) == -1 && solo != -1) {
-	// 	insertNbInMainChain(solo, _main_chain.size() - 1);
-	// 	return ;
-	// }
-	// else if (findFirstNbPair(pairs, _main_chain[0]) == -1 && solo == -1)
-	// 	return ;
-		
-	int js_index = 2;
-	size_t i = 0;
-	size_t j = 0;
-	size_t	save = 0;
-	size_t	stop = 0;
-	int	nbToInsert = 0;
-	if (solo == -1) {
-		while (_main_chain.size() != list.size() && i < _main_chain.size() && stop < _main_chain.size()) {
-			js_index++;
-			if (jacobsthalNb(js_index) >= _main_chain.size()) {
-				std::cout << BLUE << "passe jn > s " << jacobsthalNb(js_index) << DEFAULT << std::endl;
-				std::cout << BLUE << "stop  = " << stop << DEFAULT << std::endl;
-				nbToInsert = findFirstNbPair(pairs, _main_chain[stop]);
-				if (nbToInsert != -1)
-					insertNbInMainChain(nbToInsert, stop);
-				// else 
-				// 	break ;
-				std::cout << RED;
-				printVect(_main_chain);
-				std::cout << DEFAULT << std::endl;
-				stop++;
-			}
-			else {
-				std::cout << BLUE << "passe jn < s " << jacobsthalNb(js_index) << DEFAULT << std::endl;
-				save = i;
-				while (i < jacobsthalNb(js_index))
-					i++;
-				stop = i;
-				nbToInsert = findFirstNbPair(pairs, _main_chain[i]); // <=> _main_chain[jacobsthalNb(js_index)]
-				//std::cout << BLUE << "Nbtoinsert: " << nbToInsert << DEFAULT << std::endl;
-				if (nbToInsert != -1)
-					insertNbInMainChain(nbToInsert, i);
-				// else 
-				// 	break ;
-				std::cout << RED;
-				printVect(_main_chain);
-				std::cout << DEFAULT << std::endl;
-				j = i;
-				while (j < save) {
-					nbToInsert = findFirstNbPair(pairs, _main_chain[j]);
-					//std::cout << BLUE << "Nbtoinsert: " << nbToInsert << DEFAULT << std::endl;
-					if (nbToInsert != -1)
-						insertNbInMainChain(nbToInsert, j);
-					else 
-						break ;
-					std::cout << RED;
-					printVect(_main_chain);
-					std::cout << DEFAULT << std::endl;
-					j--;
-				}
-			}
-		}
-	}
-	else {
-		if (_main_chain.size() == list.size() - 1) {
-			insertNbInMainChain(solo, _main_chain.size() - 1);
-			std::cout << BLUE << "Nbtoinsert: " << solo << DEFAULT << std::endl;
-			std::cout << RED;
-			printVect(_main_chain);
-			std::cout << DEFAULT << std::endl;
-			return ;
-		}
-		while (_main_chain.size() < list.size() && i < _main_chain.size()) {
-			js_index++;
-			if (jacobsthalNb(js_index) >= _main_chain.size()) {
-				std::cout << BLUE << "passe SOLO jn > s " << jacobsthalNb(js_index) << DEFAULT << std::endl;
-				nbToInsert = findFirstNbPair(pairs, _main_chain[i]);
-				//std::cout << BLUE << "Nbtoinsert: " << nbToInsert << DEFAULT << std::endl;
-				if (nbToInsert != -1)
-					insertNbInMainChain(nbToInsert, i);
-				// else 
-				// 	break ;
-				std::cout << RED;
-				printVect(_main_chain);
-				std::cout << DEFAULT << std::endl;
-				i++;
-			}
-			else {
-				std::cout << BLUE << "passe SOLO jn < s " << jacobsthalNb(js_index) << DEFAULT << std::endl;
-				save = i;
-				while (i < jacobsthalNb(js_index))
-					i++;
-				nbToInsert = findFirstNbPair(pairs, _main_chain[i]); // <=> _main_chain[jacobsthalNb(js_index)]
-				//std::cout << BLUE << "Nbtoinsert: " << nbToInsert << DEFAULT << std::endl;
-				if (nbToInsert != -1)
-					insertNbInMainChain(nbToInsert, i);
-				// else 
-				// 	break ;
-				std::cout << RED;
-				printVect(_main_chain);
-				std::cout << DEFAULT << std::endl;
-				j = i;
-				while (j < save) {
-					nbToInsert = findFirstNbPair(pairs, _main_chain[j]);
-					//std::cout << BLUE << "Nbtoinsert: " << nbToInsert << DEFAULT << std::endl;
-					if (nbToInsert != -1)
-						insertNbInMainChain(nbToInsert, j);
-					else 
-						break ;
-					std::cout << RED;
-					printVect(_main_chain);
-					std::cout << DEFAULT << std::endl;
-					j--;
-				}
-			}
-		}
+	printVvect(_main_chain);
+	std::cout << DEFAULT;
+	std::cout << GREEN << "liste: ";
+	printVect(list);
+	std::cout << DEFAULT;
+	
+
+	_main_chain.insert(_main_chain.begin(), createVect(findFirstNbPair(pairs, _main_chain[0][0], 0), 1));
+	doSort(pairs, list, solo);
+	if (_main_chain.size() == list.size() - 1 && solo != -1) {
 		insertNbInMainChain(solo, _main_chain.size() - 1);
-		std::cout << BLUE << "Nbtoinsert: " << solo << DEFAULT << std::endl;
+		// std::cout << BLUE << "NbTO INSERTTTT: " << solo << DEFAULT << std::endl;
 		std::cout << RED;
-		printVect(_main_chain);
+		printVvect(_main_chain);
 		std::cout << DEFAULT << std::endl;
 	}
-
-	std::cout << YELLOW << std::endl;
-	printVect(_main_chain);
-	std::cout << DEFAULT <<std::endl;
 	
 	return ;
 }
+
+
+//fonction
+	//boucle qui regarde si ya pas un truc JC en revenant a 0 a chaque fois avec un curseur
+		//si un index correspond a un nombre jacobsthal et quil est a 0, appairer
+		//rechecker
+		//si le curseur arrive a la fin sans trouver, quitter la boucle
+//renvoie un truc quand elle trouve plus de JC avec un 0 disponible
+	
+//quand tu trouves pas de JC tu prends le premier qui est a 0 en repartant du debut
+//tu recheck la boucle JC
+//si tas pas pu retrouver de JC tu remets le premier truc a 0
+//tu recheck JC
+//etc..
