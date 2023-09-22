@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 18:57:00 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/11 18:45:13 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/22 18:08:17 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int main(int argc, char **argv)
 	
 	BitcoinExchange b;
 	try {
-		b.setDatabase("data.csv");
+		b.setDatabase("input.csv");
 		b.treatInputFile(argv[1]);	
 	}
 	catch (std::exception const& e) {

@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 18:37:19 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/14 17:36:07 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/22 18:13:52 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,16 +34,14 @@ int main(int argc, char **argv)
 	for (int i = 1; argv[i]; i++)
 	{
 		if (!checkList(argv[i]))
-			return (std::cerr << "Error: wrong arguments: positive integers asked only. ex:./PmergeMe 3 5 9 7 4" << std::endl, 1);
+			return (std::cerr << "Error: wrong arguments: "
+				<< "positive integers asked only. ex:./PmergeMe 3 5 9 7 4" << std::endl, 1);
 	}
-	
+	if (argc == 2)
+		return (std::cerr << "A list of 1 element is already sorted." << std::endl, 1);
 	try
 	{
 		PmergeMe p(argv);
-		//p.setVector(argv);
-		//p.printVector();
-		//p.fordJohnson(p.getVectorSize());
-		//p.printVector();
 	}
 	catch (std::exception const& e)
 	{

@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 18:37:15 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/22 15:49:22 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/22 18:19:29 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,17 @@ void	PmergeMe::printJacobNbs() const{
 	std::cout << DEFAULT << std::endl;
 }
 
+/*************************************CHECK***********************************/
+int isAlreadysorted(t_vect list) {
+	for (size_t i = 0; i < list.size(); i++) {
+		if (i + 1 < list.size()) {
+			if (list[i] > list [i + 1])
+			return (0);
+		}
+	}
+	return (1);
+}
+
 /*******************************CONSTRUCTOR_FTS********************************/
 PmergeMe::PmergeMe(char **argv) : _count(0) {
 	t_vect initial_vect;
@@ -110,6 +121,10 @@ PmergeMe::PmergeMe(char **argv) : _count(0) {
 	
 	/*vect*/
 	initial_vect = setVector(argv);
+	if (isAlreadysorted(initial_vect)){
+		std::cout << "The list is already sorted." << std::endl;
+		return ;
+	}
 	std::cout << "Before:" << '\t';
 	printVect(initial_vect);
 	startTime = get_time();

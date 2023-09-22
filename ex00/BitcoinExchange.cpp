@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 18:56:12 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/11 18:32:03 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/22 18:04:14 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,98 @@ BitcoinExchange &BitcoinExchange::operator=(BitcoinExchange const& src) {
 	return (*this);
 }
 
+bool isInt(std::string const& part, int start, int end) {
+	size_t		 i = 0;
+	std::string	str = part.substr(start, end);
+	
+	while (i < str.length()) {
+		if (!std::isdigit(str[i]))
+			return false;
+		i++;
+	}
+	return true;
+}
+
+bool isDouble(std::string const& part) {
+	std::stringstream ss(part);
+	double nb = 0;
+	
+	ss >> nb;
+	if (ss.fail() || !ss.eof())
+		return false;
+	if (nb > 1000)
+		throw (BitcoinExchange::LargeNb());
+	else if (nb < 0)
+		throw (BitcoinExchange::NegativeNb());
+	return true;
+}
+
+int	BitcoinExchange::dateCheckDatabase(std::string date) {
+	std::string year(date, 0, 4);
+	std::string month(date, 5, 2);
+	std::string day(date, 8, 2);
+	std::stringstream ss(year);
+	std::stringstream ss1(month);
+	std::stringstream ss2(day);
+
+	int y = 0;
+	int m = 0;
+	int d = 0;
+
+	ss >> y;
+	ss1 >> m;
+	ss2 >> d;
+	if (y > 2022 || y < 2009)
+		return (0);
+	if (m > 12)
+		return (0);
+	if (d > 31)
+		return (0);
+	if ((m == 2 || m == 4 || m == 6 || m == 9 || m == 11)
+		&& d == 31)
+		return (0);
+	if ((y == 2012 || y == 2016 || y == 2020) && m == 2) {
+		if (d > 29)
+			return (0);
+	}
+	else if ((y != 2012 && y != 2016 && y != 2020) && m == 2) {
+		if (d > 28)
+			return (0);
+	}
+	if (y == 2009 && m == 1 && d == 1)
+		return (0);
+	return (1);
+}
+
+int	BitcoinExchange::globalCheckDatabase(std::string line, std::string const& delimiter) {
+	size_t		delimiterPos = line.find(delimiter);
+	
+	if (delimiterPos != 10)
+		return (0);
+
+	std::string	fstPart(line, 0, delimiterPos);
+	if (fstPart[4] != '-' || fstPart[7] != '-')
+		return (0);
+	if (!isInt(fstPart, 0, 4) || !isInt(fstPart, 5, 2)
+		|| !isInt(fstPart, 8, 2))
+		return (0);
+	if (!dateCheckDatabase(fstPart))
+		return (0);
+	std::string	lstPart(line, delimiterPos + 1, line.length() - delimiterPos);
+	
+	std::stringstream ss(lstPart);
+	double nb = 0;
+	
+	ss >> nb;
+	if (ss.fail() || !ss.eof())
+		return false;
+	if (nb > INT_MAX)
+		return (0);
+	else if (nb < 0)
+		return (0);
+	return (1);
+}
+
 void BitcoinExchange::setDatabase(std::string const& filename) {
     std::string		line;
 	std::ifstream	file (filename.c_str());
@@ -55,6 +147,10 @@ void BitcoinExchange::setDatabase(std::string const& filename) {
 		while (getline(file, line)) {
 			i = line.find(delimiter);
 			if (i == std::string::npos) {
+				file.close();
+				throw (BitcoinExchange::WrongDataSyntax());
+			}
+			if (!globalCheckDatabase(line, ",")) {
 				file.close();
 				throw (BitcoinExchange::WrongDataSyntax());
 			}
@@ -87,31 +183,6 @@ void	BitcoinExchange::printInputs() {
 	}
 }
 
-bool isInt(std::string const& part, int start, int end) {
-	size_t		 i = 0;
-	std::string	str = part.substr(start, end);
-	
-	while (i < str.length()) {
-		if (!std::isdigit(str[i]))
-			return false;
-		i++;
-	}
-	return true;
-}
-
-bool isDouble(std::string const& part) {
-	std::stringstream ss(part);
-	double nb = 0;
-	
-	ss >> nb;
-	if (ss.fail() || !ss.eof())
-		return false;
-	if (nb > 1000)
-		throw (BitcoinExchange::LargeNb());
-	else if (nb < 0)
-		throw (BitcoinExchange::NegativeNb());
-	return true;
-}
 
 void	BitcoinExchange::globalCheck(std::string line, std::string const& delimiter) {
 	size_t		delimiterPos = line.find(delimiter);

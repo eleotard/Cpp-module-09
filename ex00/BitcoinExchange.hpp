@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 18:57:18 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/08 16:43:15 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/09/22 18:01:21 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,8 @@ class BitcoinExchange {
 
         void    printInputs();
         
+        int     globalCheckDatabase(std::string line, std::string const& delimiter);
+        int     dateCheckDatabase(std::string date);
 		void	setDatabase(std::string const& filename);
 		std::map<std::string, double> const&getDatabase() const;
         bool    getDbState() const;
