@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PmergeMe.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elsie <elsie@student.42.fr>                +#+  +:+       +#+        */
+/*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 18:37:12 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/21 19:29:50 by elsie            ###   ########.fr       */
+/*   Updated: 2023/09/22 15:36:07 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,14 @@
 
 #include <iostream>
 #include <vector>
+#include <deque>
 #include <string>
 #include <cstdlib>
 #include <sstream>
 #include <limits.h>
 #include <exception>
 #include <cmath>
+#include <sys/time.h>
 
 #include <bits/stdc++.h>
 
@@ -36,6 +38,10 @@ typedef std::vector<int> t_vect;
 typedef std::vector<std::pair<int, int> > p_vect;
 typedef std::vector<std::pair<int, int> >::iterator p_iterator;
 
+typedef std::deque<std::deque<int > > t_ddeque;
+typedef std::deque<int> t_deque;
+typedef std::deque<std::pair<int, int> > p_deque;
+typedef std::deque<std::pair<int, int> >::iterator p_d_iterator;
 
 class PmergeMe {
 	public:
@@ -51,6 +57,7 @@ class PmergeMe {
 		PmergeMe(PmergeMe const& src);
 		PmergeMe &operator=(PmergeMe const& src);
 
+		/******************************VECTOR***********************************/
 		/*prints*/
 		void	printVect(t_vect &list) const;
 		void	printVvect(t_vvect &vect)const;
@@ -75,20 +82,58 @@ class PmergeMe {
 		int		isJacob(int nb);
 		
 		int		isPowOfTwoLessOneNbs(int nb);
-		size_t		previousPowOfTwoLessOne(int nb);
+		size_t	previousPowOfTwoLessOne(int nb);
 		
 		int		findFirstNbPair(p_vect &pairs, int first, int indexInMain);
 		void	insertNbInMainChain(int nb, int index);
 
 		/*get*/
 		t_vvect	getMainChain() const;
+		
+		/*******************************DEQUE**********************************/
+		/*prints*/
+		void	printDeque(t_deque &list) const;
+		void	printDdeque(t_ddeque &deque)const;
+		void	printPdeque(p_deque &pairs) const;
 
+		/*constructor*/
+		t_deque	setDeque(char **argv);
+		t_deque	dExtractMainChainList();
+
+		/*ford johnson merge-insert algorithm*/
+		void	dMerge_insert(t_deque &list);
+		p_deque	dMakePairs(t_deque &list, int *solo);
+		void	dSortPairs(p_deque &pairs);
+		t_deque	dCreateNewList(p_deque &pairs);
+		t_deque	dCreateDeque(int a, int b);
+
+		void	dResetInsertionState();
+		void	dDoSort(p_deque &pairs, t_deque list, int solo);
+		
+		int		dFindFirstNbPair(p_deque &pairs, int first, int indexInMain);
+		void	dInsertNbInMainChain(int nb, int index);
+
+		int		dIsPowOfTwoLessOneNbs(int nb);
+		size_t 	dPreviousPowOfTwoLessOne(int nb);
+		void	dSetPowOfTwoLessOneNbs();
+
+		/*get*/
+		//t_ddeque	getMainChain() const;
+
+		
 	private:
+		/******************************VECTOR***********************************/
 		t_vvect	_main_chain;
 		t_vect	_final_chain;
 		t_vect	_jacobNbs;
 		t_vect	_powOfTwoLessOneNbs;
 		int		_count;
-};
+		
+		/******************************DEQUE************************************/
+		t_ddeque	_dmain_chain;
+		t_deque	_dfinal_chain;
+		t_deque	_djacobNbs;
+		t_deque	_dpowOfTwoLessOneNbs;
+};		
 
 #endif
