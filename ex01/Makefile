@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: elsie <elsie@student.42.fr>                +#+  +:+       +#+         #
+#    By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/18 18:40:07 by eleotard          #+#    #+#              #
-#    Updated: 2023/09/10 18:45:36 by elsie            ###   ########.fr        #
+#    Updated: 2023/10/01 14:07:55 by eleotard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ SRCS =	main.cpp \
 
 OBJS = ${SRCS:%.cpp=%.o}
 
-CC = c++
+CC = g++
 
 RM = rm -rf
 

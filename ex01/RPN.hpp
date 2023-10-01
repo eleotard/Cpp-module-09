@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 19:34:23 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/13 18:17:33 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/10/01 14:12:40 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ class RPN {
 		
 	private:
 		std::stack<int>	_st;
-		bool	_impair;
 };
 
 #endif

@@ -83,7 +83,6 @@ std::string RPN::calcul(std::string input) {
 		else if (input[i] != ' ')
 			return ("Error");
 	}
-	printStack();
 	if (_st.size() != 1)
 		return ("Error");
 	result << _st.top();

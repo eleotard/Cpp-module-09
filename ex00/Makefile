@@ -6,7 +6,7 @@
 #    By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/18 18:40:07 by eleotard          #+#    #+#              #
-#    Updated: 2023/09/08 16:41:17 by eleotard         ###   ########.fr        #
+#    Updated: 2023/10/01 14:07:49 by eleotard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ SRCS =	main.cpp \
 
 OBJS = ${SRCS:%.cpp=%.o}
 
-CC = c++
+CC = g++
 
 RM = rm -rf
 

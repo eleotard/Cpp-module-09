@@ -6,7 +6,7 @@
 /*   By: eleotard <eleotard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/11 18:37:15 by eleotard          #+#    #+#             */
-/*   Updated: 2023/09/22 18:19:29 by eleotard         ###   ########.fr       */
+/*   Updated: 2023/10/01 14:12:21 by eleotard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,9 +152,9 @@ PmergeMe::PmergeMe(char **argv) : _count(0) {
 	std::cout << YELLOW << processTime << DEFAULT << " us" << std::endl << std::endl;
 	
 	/*count of comparaisons*/
-	std::cout << "nb of comparaisons: " << GREEN << _count << DEFAULT << std::endl;
+	std::cout << "Nb of comparaisons: " << GREEN << _count << DEFAULT << std::endl;
 	n = initial_vect.size();
-	std::cout << "worse case: " << RED << n * log2((n)) << DEFAULT << std::endl;
+	std::cout << "Theorical nb of comparaisons in the worst case: " << RED << n * log2((n)) << DEFAULT << std::endl;
 }
 
 t_vect	PmergeMe::setVector(char **argv) {
